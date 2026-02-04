@@ -14,7 +14,7 @@ function App() {
           element={
             <MainLayout role={role} onRoleChange={setRole} />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/pages/:pageId" element={<PageDetail />} />
+          <Route path="/pages/:pageId" element={<PageDetail role={role} />}/>
         </Route>
       </Routes>
     </BrowserRouter>
