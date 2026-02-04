@@ -16,9 +16,9 @@ function Sidebar() {
         borderRight: "1px solid #ddd",
         }}
     >
-        <h3>Pages</h3>
-
-        <ul style={{ listStyle: "none", padding: 0 }}>
+    <h3><Link to="/">Pages</Link></h3>
+        
+    <ul style={{ listStyle: "none", padding: 0 }}>
         {pages?.map((page) => (
             <li key={page.id} style={{ marginBottom: 8 }}>
             <Link to={`/pages/${page.id}`}>{page.title}</Link>
