@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import {useGetPagesQuery,useAddSectionMutation,useUpdateSectionMutation,useDeleteSectionMutation,} from "../services/api";
+import {useGetPagesQuery,useAddSectionMutation,useUpdateSectionMutation,useDeleteSectionMutation,useAddTextBlockMutation} from "../services/api";
 
 type PageDetailProps = {
     role: "user" | "admin";
@@ -12,6 +12,7 @@ function PageDetail({ role }: PageDetailProps) {
     const [addSection] = useAddSectionMutation();
     const [updateSection] = useUpdateSectionMutation();
     const [deleteSection] = useDeleteSectionMutation();
+    const [addTextBlock] = useAddTextBlockMutation();
     const [editingSectionId, setEditingSectionId] =
     useState<string | null>(null);
     const [sectionTitle, setSectionTitle] = useState("");
@@ -74,7 +75,60 @@ function PageDetail({ role }: PageDetailProps) {
             ) : (
                 <>
                     <h3>{section.title}</h3>
-                
+                    {role === "admin" && (
+                    <button
+                        onClick={() => {
+                        addTextBlock({
+                            pageId: page.id,
+                            sectionId: section.id,
+                            content: "This is a text block",
+                        });
+                        }}
+                        style={{ marginBottom: 8 }}
+                    >
+                        Add text block
+                    </button>
+                    )}
+
+                    {section.blocks.length === 0 ? (
+                    <p style={{ fontStyle: "italic", color: "#666" }}>
+                        No blocks yet
+                    </p>
+                    ) : (
+                    section.blocks.map((block) => {
+                        if (block.type === "text") {
+                        return (
+                            <div
+                            key={block.id}
+                            style={{
+                                padding: 8,
+                                border: "1px dashed #ccc",
+                                marginBottom: 8,
+                            }}
+                            >
+                            {block.content}
+                            </div>
+                        );
+                        }
+
+                        if (block.type === "image") {
+                        return (
+                            <img
+                            key={block.id}
+                            src={block.url}
+                            alt=""
+                            style={{
+                                maxWidth: "100%",
+                                marginBottom: 8,
+                            }}
+                            />
+                        );
+                        }
+
+                        return null;
+                    })
+)}
+
                     {role === "admin" && (
                         <>
                         <button

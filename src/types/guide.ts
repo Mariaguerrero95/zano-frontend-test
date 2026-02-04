@@ -2,6 +2,10 @@ export type ID = string;
 
 export type UserRole = "user" | "admin";
 
+/** =====================
+ *  BLOCKS
+ *  ===================== */
+
 export type BlockType = "text" | "image";
 
 export type GridLayout = {
@@ -28,6 +32,10 @@ export type ImageBlock = BaseBlock & {
 };
 
 export type Block = TextBlock | ImageBlock;
+
+/** =====================
+ *  SECTIONS & PAGES
+ *  ===================== */
 
 export type Section = {
     id: ID;
