@@ -1,10 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import {
-    useGetPagesQuery,
-    useAddSectionMutation,
-    useUpdateSectionMutation,
-} from "../services/api";
+import {useGetPagesQuery,useAddSectionMutation,useUpdateSectionMutation,useDeleteSectionMutation,} from "../services/api";
 
 type PageDetailProps = {
     role: "user" | "admin";
@@ -15,6 +11,7 @@ function PageDetail({ role }: PageDetailProps) {
     const {data: pages,isLoading,refetch } = useGetPagesQuery();
     const [addSection] = useAddSectionMutation();
     const [updateSection] = useUpdateSectionMutation();
+    const [deleteSection] = useDeleteSectionMutation();
     const [editingSectionId, setEditingSectionId] =
     useState<string | null>(null);
     const [sectionTitle, setSectionTitle] = useState("");
@@ -76,19 +73,41 @@ function PageDetail({ role }: PageDetailProps) {
                 </>
             ) : (
                 <>
-                <h3>{section.title}</h3>
-                {role === "admin" && (
-                    <button
-                    onClick={() => {
-                        setEditingSectionId(section.id);
-                        setSectionTitle(section.title);
-                    }}
-                    >
-                    Edit
-                    </button>
-                )}
-                </>
-            )}
+                    <h3>{section.title}</h3>
+                
+                    {role === "admin" && (
+                        <>
+                        <button
+                            onClick={() => {
+                            setEditingSectionId(section.id);
+                            setSectionTitle(section.title);
+                            }}
+                        >
+                            Edit
+                        </button>
+                
+                        <button
+                            onClick={() => {
+                            const confirmed = window.confirm(
+                                "Are you sure you want to delete this section?"
+                            );
+                            if (!confirmed) return;
+                
+                            deleteSection({
+                                pageId: page.id,
+                                sectionId: section.id,
+                            });
+                            }}
+                            style={{ marginLeft: 8 }}
+                        >
+                            Delete
+                        </button>
+                        </>
+                    )}
+                    </>
+                )
+                
+                }
             </div>
         ))}
         </div>
