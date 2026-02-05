@@ -9,6 +9,7 @@ import {
     useUpdateBlockLayoutMutation,
 } from "../services/api";
 import GridLayout from "react-grid-layout";
+import ReactMarkdown from "react-markdown";
 
 type PageDetailProps = {
     role: "user" | "admin";
@@ -92,16 +93,21 @@ function PageDetail({ role }: PageDetailProps) {
                 {role === "admin" && (
                     <button
                     onClick={() => {
+                        const content = window.prompt(
+                            "Write text (Markdown supported):",
+                            "**Bold text**\n\n*Italic text*\n\n- Item one\n- Item two"
+                        );
+                    
+                        if (!content) return;
                         addTextBlock({
-                        pageId: page.id,
-                        sectionId: section.id,
-                        content: "This is a text block",
+                            pageId: page.id,
+                            sectionId: section.id,
+                            content,
                         });
                     }}
-                    style={{ marginBottom: 8 }}
-                    >
+                >
                     Add text block
-                    </button>
+                </button>
                 )}
 
                 <GridLayout
@@ -154,7 +160,8 @@ function PageDetail({ role }: PageDetailProps) {
                             background: "#fafafa",
                             }}
                         >
-                            {block.content}
+                            <ReactMarkdown>{block.content}</ReactMarkdown>
+
                         </div>
                         );
                     }
