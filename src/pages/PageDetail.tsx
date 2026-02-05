@@ -90,44 +90,64 @@ function PageDetail({ role }: PageDetailProps) {
                     </button>
                     )}
 
+                    <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(12, 1fr)",
+                        gap: 8,
+                        marginTop: 12,
+                    }}
+                    >
                     {section.blocks.length === 0 ? (
-                    <p style={{ fontStyle: "italic", color: "#666" }}>
+                        <p style={{ fontStyle: "italic", color: "#666" }}>
                         No blocks yet
-                    </p>
+                        </p>
                     ) : (
-                    section.blocks.map((block) => {
+                        section.blocks.map((block) => {
                         if (block.type === "text") {
-                        return (
+                            return (
                             <div
-                            key={block.id}
-                            style={{
+                                key={block.id}
+                                style={{
+                                gridColumn: `${block.layout.x + 1} / span ${block.layout.w}`,
+                                gridRow: `span ${block.layout.h}`,
                                 padding: 8,
                                 border: "1px dashed #ccc",
-                                marginBottom: 8,
-                            }}
+                                background: "#fafafa",
+                                }}
                             >
-                            {block.content}
+                                {block.content}
                             </div>
-                        );
+                            );
                         }
 
                         if (block.type === "image") {
-                        return (
-                            <img
-                            key={block.id}
-                            src={block.url}
-                            alt=""
-                            style={{
-                                maxWidth: "100%",
-                                marginBottom: 8,
-                            }}
-                            />
-                        );
+                            return (
+                            <div
+                                key={block.id}
+                                style={{
+                                gridColumn: `${block.layout.x + 1} / span ${block.layout.w}`,
+                                gridRow: `span ${block.layout.h}`,
+                                }}
+                            >
+                                <img
+                                src={block.url}
+                                alt=""
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                }}
+                                />
+                            </div>
+                            );
                         }
 
                         return null;
-                    })
-)}
+                        })
+                    )}
+</div>
+
 
                     {role === "admin" && (
                         <>

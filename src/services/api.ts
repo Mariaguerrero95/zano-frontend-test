@@ -148,7 +148,12 @@ addTextBlock: builder.mutation<void, AddTextBlockArgs>({
                             id: uuid(),
                             type: "text",
                             content,
-                            layout: { x: 0, y: 0, w: 6, h: 2 },
+                            layout: {
+                                x: Math.floor(Math.random() * 6),
+                                y: 0,
+                                w: 3,
+                                h: 2,
+                                },
                             },
                         ],
                         }
