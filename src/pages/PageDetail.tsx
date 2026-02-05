@@ -6,6 +6,7 @@ import {
     useUpdateSectionMutation,
     useDeleteSectionMutation,
     useAddTextBlockMutation,
+    useUpdateBlockLayoutMutation,
 } from "../services/api";
 import GridLayout from "react-grid-layout";
 
@@ -21,6 +22,7 @@ function PageDetail({ role }: PageDetailProps) {
     const [updateSection] = useUpdateSectionMutation();
     const [deleteSection] = useDeleteSectionMutation();
     const [addTextBlock] = useAddTextBlockMutation();
+    const [updateBlockLayout] = useUpdateBlockLayoutMutation();
 
     const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
     const [sectionTitle, setSectionTitle] = useState("");
@@ -103,23 +105,48 @@ function PageDetail({ role }: PageDetailProps) {
                 )}
 
                 <GridLayout
-                    cols={12}
-                    rowHeight={40}
-                    width={800}
-                    isDraggable={role === "admin"}
-                    isResizable={role === "admin"}
-                    margin={[8, 8]}
+                key={role}
+                cols={12}
+                rowHeight={40}
+                width={800}
+                isDraggable={role === "admin"}
+                isResizable={role === "admin"}
+                isDroppable={false}
+                preventCollision={true}
+                compactType={null}
+                margin={[8, 8]}
+                onLayoutChange={(layout) => {
+                    if (role !== "admin") return;
+
+                    layout.forEach((item) => {
+                    updateBlockLayout({
+                        pageId: page.id,
+                        sectionId: section.id,
+                        blockId: item.i,
+                        layout: {
+                        x: item.x,
+                        y: item.y,
+                        w: item.w,
+                        h: item.h,
+                        },
+                    });
+                    });
+                }}
                 >
+
+
+
                     {section.blocks.map((block) => {
                     if (block.type === "text") {
                         return (
                         <div
                             key={block.id}
                             data-grid={{
-                            x: block.layout.x,
-                            y: block.layout.y,
-                            w: block.layout.w,
-                            h: block.layout.h,
+                                x: block.layout.x,
+                                y: block.layout.y,
+                                w: block.layout.w,
+                                h: block.layout.h,
+                                static: role !== "admin",
                             }}
                             style={{
                             border: "1px dashed #ccc",

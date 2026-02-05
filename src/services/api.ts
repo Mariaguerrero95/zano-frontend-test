@@ -34,6 +34,17 @@ type AddTextBlockArgs = {
     sectionId: string;
     content: string;
 };
+type UpdateBlockLayoutArgs = {
+    pageId: string;
+    sectionId: string;
+    blockId: string;
+    layout: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+    };
+};
 
 export const api = createApi({
     reducerPath: "api",
@@ -113,6 +124,35 @@ export const api = createApi({
         invalidatesTags: ["Pages"],
     }),
 
+    /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/layout */
+    updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
+        queryFn: async ({ pageId, sectionId, blockId, layout }) => {
+        pages = pages.map((page) =>
+            page.id === pageId
+            ? {
+                ...page,
+                sections: page.sections.map((section) =>
+                    section.id === sectionId
+                    ? {
+                        ...section,
+                        blocks: section.blocks.map((block) =>
+                            block.id === blockId
+                            ? { ...block, layout }
+                            : block
+                        ),
+                        }
+                    : section
+                ),
+                }
+            : page
+        );
+    
+        return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+    }),
+    
+
     /*** DELETE /pages/:pageId/sections/:sectionId */
 deleteSection: builder.mutation<void, DeleteSectionArgs>({
     queryFn: async ({ pageId, sectionId }) => {
@@ -178,5 +218,6 @@ export const {
     useUpdateSectionMutation,
     useDeleteSectionMutation,
     useAddTextBlockMutation,
+    useUpdateBlockLayoutMutation,
 } = api;
 
