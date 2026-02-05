@@ -154,55 +154,55 @@ export const api = createApi({
     
 
     /*** DELETE /pages/:pageId/sections/:sectionId */
-deleteSection: builder.mutation<void, DeleteSectionArgs>({
-    queryFn: async ({ pageId, sectionId }) => {
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: page.sections.filter(
-                    (section) => section.id !== sectionId
-                ),
-                }
-            : page
-        );
+    deleteSection: builder.mutation<void, DeleteSectionArgs>({
+        queryFn: async ({ pageId, sectionId }) => {
+            pages = pages.map((page) =>
+                page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.filter(
+                        (section) => section.id !== sectionId
+                    ),
+                    }
+                : page
+            );
     
         return { data: undefined };
         },
         invalidatesTags: ["Pages"],
     }),
     /*** POST /pages/:pageId/sections/:sectionId/blocks/text */
-addTextBlock: builder.mutation<void, AddTextBlockArgs>({
-    queryFn: async ({ pageId, sectionId, content }) => {
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: page.sections.map((section) =>
-                    section.id === sectionId
-                    ? {
-                        ...section,
-                        blocks: [
-                            ...section.blocks,
-                            {
-                            id: uuid(),
-                            type: "text",
-                            content,
-                            layout: {
-                                x: Math.floor(Math.random() * 6),
-                                y: 0,
-                                w: 3,
-                                h: 2,
+    addTextBlock: builder.mutation<void, AddTextBlockArgs>({
+        queryFn: async ({ pageId, sectionId, content }) => {
+            pages = pages.map((page) =>
+                page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.map((section) =>
+                        section.id === sectionId
+                        ? {
+                            ...section,
+                            blocks: [
+                                ...section.blocks,
+                                {
+                                id: uuid(),
+                                type: "text",
+                                content,
+                                layout: {
+                                    x: Math.floor(Math.random() * 6),
+                                    y: 0,
+                                    w: 3,
+                                    h: 2,
+                                    },
                                 },
-                            },
-                        ],
-                        }
-                    : section
-                ),
-                }
-            : page
-        );
-    
+                            ],
+                            }
+                        : section
+                    ),
+                    }
+                : page
+            );
+        
         return { data: undefined };
     },
     invalidatesTags: ["Pages"],

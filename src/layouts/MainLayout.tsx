@@ -9,7 +9,7 @@ type MainLayoutProps = {
 function MainLayout({ role, onRoleChange }: MainLayoutProps) {
     return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-        <Sidebar />
+        <Sidebar role={role} />
     <main style={{ flex: 1, padding: 24 }}>
         <Outlet />
     </main>
