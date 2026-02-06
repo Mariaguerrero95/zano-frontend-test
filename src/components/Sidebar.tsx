@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetPagesQuery,useCreatePageMutation,} from "../services/api";
+import { useGetPagesQuery,useCreatePageMutation,useDeletePageMutation,} from "../services/api";
 
 type SidebarProps = {
-  role: "user" | "admin";
+    role: "user" | "admin";
 };
 
 function Sidebar({ role }: SidebarProps) {
     const { data: pages, isLoading } = useGetPagesQuery();
     const [newPageTitle, setNewPageTitle] = useState("");
     const [createPage] = useCreatePageMutation();
+    const [deletePage] = useDeletePageMutation();
 
     if (isLoading) {
         return <div>Loading pages...</div>;
@@ -50,11 +51,39 @@ function Sidebar({ role }: SidebarProps) {
         )}
 
         <ul style={{ listStyle: "none", padding: 0 }}>
-            {pages?.map((page) => (
-            <li key={page.id} style={{ marginBottom: 8 }}>
-                <Link to={`/pages/${page.id}`}>{page.title}</Link>
-            </li>
-            ))}
+        {pages?.map((page) => (
+  <li
+    key={page.id}
+    style={{
+      marginBottom: 8,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <Link to={`/pages/${page.id}`}>{page.title}</Link>
+
+    {role === "admin" && (
+      <button
+        onClick={() => {
+          const confirmed = window.confirm(
+            "Are you sure you want to delete this page?"
+          );
+          if (!confirmed) return;
+
+          deletePage({ pageId: page.id });
+        }}
+        style={{
+          marginLeft: 8,
+          fontSize: 12,
+        }}
+      >
+        Delete
+      </button>
+    )}
+  </li>
+))}
+
         </ul>
         </aside>
     );

@@ -45,18 +45,23 @@ type UpdateBlockLayoutArgs = {
         h: number;
     };
 };
+type DeletePageArgs = {
+    pageId: string;
+};
+
+
 
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fakeBaseQuery(),
     tagTypes: ["Pages"],
     endpoints: (builder) => ({
-        /*** GET /pages */
-        getPages: builder.query<Page[], void>({
-        queryFn: async () => {
-            return { data: pages };
-        },
-        providesTags: ["Pages"],
+    /*** GET /pages */
+    getPages: builder.query<Page[], void>({
+    queryFn: async () => {
+        return { data: pages };
+    },
+    providesTags: ["Pages"],
     }),
 
     /*** POST /pages */
@@ -73,6 +78,15 @@ export const api = createApi({
         return { data: newPage };
     },
     invalidatesTags: ["Pages"],
+    }),
+
+    /*** DELETE /pages/:pageId */
+    deletePage: builder.mutation<void, DeletePageArgs>({
+        queryFn: async ({ pageId }) => {
+        pages = pages.filter((page) => page.id !== pageId);
+        return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
     }),
 
     /*** POST /pages/:pageId/sections */
@@ -217,6 +231,7 @@ export const {
     useAddSectionMutation,
     useUpdateSectionMutation,
     useDeleteSectionMutation,
+    useDeletePageMutation,
     useAddTextBlockMutation,
     useUpdateBlockLayoutMutation,
 } = api;
