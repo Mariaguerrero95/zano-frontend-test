@@ -4,12 +4,10 @@ import {
     useAddSectionMutation,
     useDeleteSectionMutation,
     useAddTextBlockMutation,
-    useUpdateBlockLayoutMutation,
     useUpdateTextBlockMutation,
 } from "../services/api";
 import RichTextEditor from "../components/RichTextEditor";
 import "../styles/PageDetail.css";
-
 
 type PageDetailProps = {
     role: "user" | "admin";
@@ -21,16 +19,13 @@ function PageDetail({ role }: PageDetailProps) {
     const [addSection] = useAddSectionMutation();
     const [deleteSection] = useDeleteSectionMutation();
     const [addTextBlock] = useAddTextBlockMutation();
-    const [updateBlockLayout] = useUpdateBlockLayoutMutation();
     const [updateTextBlock] = useUpdateTextBlockMutation();
 
     if (isLoading || !pages || pages.length === 0) {
         return <div>Loading…</div>;
     }
     const page = pages.find((p) => p.id === pageId) ?? pages[0];
-    if (!page || !Array.isArray(page.sections)) {
-        return <div>Loading page…</div>;
-    }
+    if (!page) return <div>Page not found</div>;
     return (
         <div className="page-detail">
         <h2>{page.title}</h2>
@@ -45,70 +40,57 @@ function PageDetail({ role }: PageDetailProps) {
             </button>
         )}
         {page.sections.length === 0 && <p>No sections yet.</p>}
-        {page.sections.map((section) => {
-            const baseLayout = section.blocks.map((block) => ({
-            i: block.id,
-            x: block.layout.x,
-            y: block.layout.y,
-            w: block.layout.w,
-            h: block.layout.h,
-            }));
-            const layouts = {
-            lg: baseLayout,
-            md: baseLayout,
-            sm: baseLayout,
-            xs: baseLayout,
-            xxs: baseLayout,
-            };
-            return (
+        {page.sections.map((section) => (
             <div key={section.id} className="card">
-                <h3>{section.title}</h3>
-                {role === "admin" && (
+            <h3>{section.title}</h3>
+            {role === "admin" && (
                 <button
-                    onClick={async () => {
+                onClick={async () => {
                     await addTextBlock({
-                        pageId: page.id,
-                        sectionId: section.id,
-                        content: "<p>Start writing…</p>",
+                    pageId: page.id,
+                    sectionId: section.id,
+                    content: "<p>Start writing…</p>",
                     });
                     refetch();
-                    }}
+                }}
                 >
-                    Add text block
+                Add text block
                 </button>
-                )}
-    {section.blocks.map((block) => (
-    <div key={block.id} className="text-block">
-        <RichTextEditor
-        value={block.content}
-        editable={role === "admin"}
-        onChange={(html) => {
-            updateTextBlock({
-            pageId: page.id,
-            sectionId: section.id,
-            blockId: block.id,
-            content: html,
-            });
-        }}
-        />
-    </div>
-    ))}
-                {role === "admin" && (
-                <button
-                    onClick={() => {
-                    if (!window.confirm("Delete section?")) return;
-                    deleteSection({
+            )}
+            {section.blocks.map((block) => {
+                if (block.type !== "text") return null;
+                return (
+                <div key={block.id} className="text-block">
+                    <RichTextEditor
+                    value={block.content}
+                    editable={role === "admin"}
+                    onChange={(html) => {
+                        updateTextBlock({
                         pageId: page.id,
                         sectionId: section.id,
-                    });
+                        blockId: block.id,
+                        content: html,
+                        });
                     }}
+                    />
+                </div>
+                );
+            })}
+            {role === "admin" && (
+                <button
+                onClick={() => {
+                    if (!window.confirm("Delete section?")) return;
+                    deleteSection({
+                    pageId: page.id,
+                    sectionId: section.id,
+                    });
+                }}
                 >
-                    Delete section
+                Delete section
                 </button>
-                )}
+            )}
             </div>
-            );
-        })}
+        ))}
         </div>
     );
 }
