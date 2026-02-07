@@ -7,35 +7,28 @@ import {
   useDeletePageMutation,
 } from "../services/api";
 
-
 type SidebarProps = {
   role: "user" | "admin";
 };
-
 function Sidebar({ role }: SidebarProps) {
   const { data: pages, isLoading } = useGetPagesQuery();
   const [newPageTitle, setNewPageTitle] = useState("");
   const [search, setSearch] = useState("");
-
   const [createPage] = useCreatePageMutation();
   const [deletePage] = useDeletePageMutation();
-
   const location = useLocation();
 
   if (isLoading) {
     return <aside className="sidebar">Loading pages…</aside>;
   }
-
   const filteredPages = pages?.filter((page) =>
     page.title.toLowerCase().includes(search.toLowerCase())
   );
-
   return (
     <aside className="sidebar">
       <h1 className="sidebar-title">
         <Link to="/">Zano Help Center</Link>
       </h1>
-
       {/* 🔍 SEARCH */}
       <input
         className="sidebar-search"
@@ -44,7 +37,6 @@ function Sidebar({ role }: SidebarProps) {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-
       {/* ➕ CREATE PAGE (ADMIN ONLY) */}
       {role === "admin" && (
         <div className="sidebar-create">
@@ -67,12 +59,10 @@ function Sidebar({ role }: SidebarProps) {
           </button>
         </div>
       )}
-
       {/* 📄 PAGES */}
       <ul className="sidebar-list">
         {filteredPages?.map((page) => {
           const isActive = location.pathname === `/pages/${page.id}`;
-
           return (
             <li key={page.id} className="sidebar-item">
               <Link
@@ -81,7 +71,6 @@ function Sidebar({ role }: SidebarProps) {
               >
                 {page.title}
               </Link>
-
               {role === "admin" && (
                 <button
                   className="delete-page"
@@ -100,7 +89,6 @@ function Sidebar({ role }: SidebarProps) {
             </li>
           );
         })}
-
         {filteredPages?.length === 0 && (
           <li className="sidebar-empty">No results found</li>
         )}

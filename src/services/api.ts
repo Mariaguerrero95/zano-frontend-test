@@ -48,7 +48,12 @@ type UpdateBlockLayoutArgs = {
 type DeletePageArgs = {
     pageId: string;
 };
-
+type UpdateTextBlockArgs = {
+    pageId: string;
+    sectionId: string;
+    blockId: string;
+    content: string;
+};
 
 
 export const api = createApi({
@@ -166,6 +171,33 @@ export const api = createApi({
         invalidatesTags: ["Pages"],
     }),
     
+    /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/content */
+    updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
+        queryFn: async ({ pageId, sectionId, blockId, content }) => {
+        pages = pages.map((page) =>
+            page.id === pageId
+            ? {
+                ...page,
+                sections: page.sections.map((section) =>
+                    section.id === sectionId
+                    ? {
+                        ...section,
+                        blocks: section.blocks.map((block) =>
+                            block.id === blockId
+                            ? { ...block, content }
+                            : block
+                        ),
+                        }
+                    : section
+                ),
+                }
+            : page
+        );
+    
+        return { data: undefined };
+    },
+    invalidatesTags: ["Pages"],
+    }),
 
     /*** DELETE /pages/:pageId/sections/:sectionId */
     deleteSection: builder.mutation<void, DeleteSectionArgs>({
@@ -203,10 +235,10 @@ export const api = createApi({
                                 type: "text",
                                 content,
                                 layout: {
-                                    x: Math.floor(Math.random() * 6),
-                                    y: 0,
-                                    w: 3,
-                                    h: 2,
+                                    x: 0,
+                                    y: section.blocks.length * 2, // 🔥 CLAVE
+                                    w: 6,
+                                    h: 3,
                                     },
                                 },
                             ],
@@ -234,5 +266,6 @@ export const {
     useDeletePageMutation,
     useAddTextBlockMutation,
     useUpdateBlockLayoutMutation,
+    useUpdateTextBlockMutation,
 } = api;
 

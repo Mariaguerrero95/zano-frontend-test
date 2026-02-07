@@ -5,18 +5,15 @@ type MainLayoutProps = {
   role: "user" | "admin";
   onRoleChange: (role: "user" | "admin") => void;
 };
-
 function MainLayout({ role, onRoleChange }: MainLayoutProps) {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* SIDEBAR */}
       <Sidebar role={role} />
-
       {/* MAIN CONTENT */}
       <main style={{ flex: 1, padding: 24, background: "#f7f8fa" }}>
         <Outlet />
       </main>
-
       {/* ROLE SWITCH */}
       <div
         style={{

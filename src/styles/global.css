@@ -6,27 +6,23 @@
     --color-text: #111827;
     --color-third: #6b7280;
 }
-
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--color-bg);
     color: var(--color-text);
 }
-
 .sidebar {
     width: 260px;
     background: var(--color-surface);
     border-right: 1px solid var(--color-border);
     padding: 16px;
 }
-
 .sidebar h1 {
     font-size: 18px;
     margin-bottom: 16px;
     color: var(--color-primary);
 }
-
 .sidebar a {
     display: block;
     padding: 8px 10px;
@@ -34,23 +30,19 @@ body {
     color: var(--color-text);
     text-decoration: none;
 }
-
 .sidebar a.active,
 .sidebar a:hover {
     background: rgba(37, 99, 235, 0.1);
     color: var(--color-primary);
 }
-
 .main {
     flex: 1;
     padding: 32px;
 }
-
 .content {
     max-width: 760px;
     margin: 0 auto;
 }
-
 button {
     background: var(--color-primary);
     color: white;
@@ -59,18 +51,14 @@ button {
     padding: 8px 12px;
     cursor: pointer;
 }
-
 button.secondary {
     background: transparent;
     color: var(--color-primary);
 }
-
-
 button.danger {
     background: transparent;
     color: #dc2626;
 }
-
 .card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -78,11 +66,10 @@ button.danger {
     padding: 16px;
     margin-bottom: 16px;
 }
-
 .search {
     width: 100%;
     padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid var(--color-border);
     margin-bottom: 16px;
-  }
+}

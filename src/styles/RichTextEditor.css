@@ -1,0 +1,42 @@
+.rich-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+.editor-toolbar {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    background: #f9fafb;
+    flex-wrap: wrap;
+}
+.editor-content {
+    flex: 1;
+    min-height: 120px;
+    padding: 8px;
+    overflow-y: auto;
+}
+.editor-content:focus {
+    outline: none;
+}
+.color-picker {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.color-picker input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
