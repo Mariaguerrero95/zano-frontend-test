@@ -1,92 +1,112 @@
+import "../styles/Sidebar.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useGetPagesQuery,useCreatePageMutation,useDeletePageMutation,} from "../services/api";
+import { Link, useLocation } from "react-router-dom";
+import {
+  useGetPagesQuery,
+  useCreatePageMutation,
+  useDeletePageMutation,
+} from "../services/api";
+
 
 type SidebarProps = {
-    role: "user" | "admin";
+  role: "user" | "admin";
 };
 
 function Sidebar({ role }: SidebarProps) {
-    const { data: pages, isLoading } = useGetPagesQuery();
-    const [newPageTitle, setNewPageTitle] = useState("");
-    const [createPage] = useCreatePageMutation();
-    const [deletePage] = useDeletePageMutation();
+  const { data: pages, isLoading } = useGetPagesQuery();
+  const [newPageTitle, setNewPageTitle] = useState("");
+  const [search, setSearch] = useState("");
 
-    if (isLoading) {
-        return <div>Loading pages...</div>;
-    }
+  const [createPage] = useCreatePageMutation();
+  const [deletePage] = useDeletePageMutation();
 
-    return (
-        <aside
-        style={{
-            width: 240,
-            padding: 16,
-            borderRight: "1px solid #ddd",
-        }}
-        >
-        <h3>
-            <Link to="/">Pages</Link>
-        </h3>
+  const location = useLocation();
 
-        {role === "admin" && (
-            <div style={{ marginBottom: 16 }}>
-            <input
-                type="text"
-                placeholder="Page title"
-                value={newPageTitle}
-                onChange={(e) => setNewPageTitle(e.target.value)}
-                style={{ width: "100%", marginBottom: 8 }}
-            />
-            <button
-                onClick={() => {
-                if (!newPageTitle.trim()) return;
-                createPage({ title: newPageTitle });
-                setNewPageTitle("");
-                }}
-                style={{ width: "100%" }}
-            >
-                Add page
-            </button>
-            </div>
-        )}
+  if (isLoading) {
+    return <aside className="sidebar">Loading pages…</aside>;
+  }
 
-        <ul style={{ listStyle: "none", padding: 0 }}>
-        {pages?.map((page) => (
-  <li
-    key={page.id}
-    style={{
-      marginBottom: 8,
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-    }}
-  >
-    <Link to={`/pages/${page.id}`}>{page.title}</Link>
+  const filteredPages = pages?.filter((page) =>
+    page.title.toLowerCase().includes(search.toLowerCase())
+  );
 
-    {role === "admin" && (
-      <button
-        onClick={() => {
-          const confirmed = window.confirm(
-            "Are you sure you want to delete this page?"
+  return (
+    <aside className="sidebar">
+      <h1 className="sidebar-title">
+        <Link to="/">Zano Help Center</Link>
+      </h1>
+
+      {/* 🔍 SEARCH */}
+      <input
+        className="sidebar-search"
+        type="text"
+        placeholder="Search guides..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      {/* ➕ CREATE PAGE (ADMIN ONLY) */}
+      {role === "admin" && (
+        <div className="sidebar-create">
+          <input
+            className="sidebar-input"
+            type="text"
+            placeholder="New page title"
+            value={newPageTitle}
+            onChange={(e) => setNewPageTitle(e.target.value)}
+          />
+          <button
+            className="primary-button"
+            onClick={() => {
+              if (!newPageTitle.trim()) return;
+              createPage({ title: newPageTitle });
+              setNewPageTitle("");
+            }}
+          >
+            + Add page
+          </button>
+        </div>
+      )}
+
+      {/* 📄 PAGES */}
+      <ul className="sidebar-list">
+        {filteredPages?.map((page) => {
+          const isActive = location.pathname === `/pages/${page.id}`;
+
+          return (
+            <li key={page.id} className="sidebar-item">
+              <Link
+                to={`/pages/${page.id}`}
+                className={isActive ? "active" : ""}
+              >
+                {page.title}
+              </Link>
+
+              {role === "admin" && (
+                <button
+                  className="delete-page"
+                  onClick={() => {
+                    const confirmed = window.confirm(
+                      "Are you sure you want to delete this page?"
+                    );
+                    if (!confirmed) return;
+                    deletePage({ pageId: page.id });
+                  }}
+                  title="Delete page"
+                >
+                  ✕
+                </button>
+              )}
+            </li>
           );
-          if (!confirmed) return;
+        })}
 
-          deletePage({ pageId: page.id });
-        }}
-        style={{
-          marginLeft: 8,
-          fontSize: 12,
-        }}
-      >
-        Delete
-      </button>
-    )}
-  </li>
-))}
-
-        </ul>
-        </aside>
-    );
+        {filteredPages?.length === 0 && (
+          <li className="sidebar-empty">No results found</li>
+        )}
+      </ul>
+    </aside>
+  );
 }
 
 export default Sidebar;

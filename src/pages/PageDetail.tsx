@@ -9,7 +9,7 @@ import {
     useUpdateBlockLayoutMutation,
 } from "../services/api";
 import GridLayout from "react-grid-layout";
-import ReactMarkdown from "react-markdown";
+import "../styles/PageDetail.css";
 
 type PageDetailProps = {
     role: "user" | "admin";
@@ -29,13 +29,15 @@ function PageDetail({ role }: PageDetailProps) {
     const [sectionTitle, setSectionTitle] = useState("");
 
     if (isLoading) {
-    return <div>Loading page...</div>;
+        return <div>Loading page...</div>;
     }
 
-    const page = pages?.find((p) => p.id === pageId);
-    if (!page) {
-        return <div>Page not found</div>;
-    }
+    const page = pages?.find((p) => p.id === pageId) ?? pages?.[0];
+
+if (!page) {
+    return <div>No pages available</div>;
+}
+
 
     return (
         <div>
@@ -59,14 +61,7 @@ function PageDetail({ role }: PageDetailProps) {
         {page.sections.length === 0 && <p>No sections yet.</p>}
 
         {page.sections.map((section) => (
-            <div
-            key={section.id}
-            style={{
-                border: "1px solid #ddd",
-                padding: 12,
-                marginBottom: 12,
-            }}
-            >
+            <div key={section.id} className="card">
             {editingSectionId === section.id ? (
                 <div>
                 <input
@@ -93,75 +88,96 @@ function PageDetail({ role }: PageDetailProps) {
                 {role === "admin" && (
                     <button
                     onClick={() => {
-                        const content = window.prompt(
-                            "Write text (Markdown supported):",
-                            "**Bold text**\n\n*Italic text*\n\n- Item one\n- Item two"
-                        );
-                    
-                        if (!content) return;
                         addTextBlock({
-                            pageId: page.id,
-                            sectionId: section.id,
-                            content,
+                        pageId: page.id,
+                        sectionId: section.id,
+                        content: "<p>Edit this text</p>",
                         });
                     }}
-                >
+                    style={{ marginBottom: 12 }}
+                    >
                     Add text block
-                </button>
+                    </button>
                 )}
 
                 <GridLayout
-                key={role}
-                cols={12}
-                rowHeight={40}
-                width={800}
-                isDraggable={role === "admin"}
-                isResizable={role === "admin"}
-                isDroppable={false}
-                preventCollision={true}
-                compactType={null}
-                margin={[8, 8]}
-                onLayoutChange={(layout) => {
+                    key={role}
+                    cols={12}
+                    rowHeight={40}
+                    width={800}
+                    isDraggable={role === "admin"}
+                    isResizable={role === "admin"}
+                    isDroppable={false}
+                    preventCollision={true}
+                    compactType={null}
+                    margin={[8, 8]}
+                    onLayoutChange={(layout) => {
                     if (role !== "admin") return;
 
                     layout.forEach((item) => {
-                    updateBlockLayout({
+                        updateBlockLayout({
                         pageId: page.id,
                         sectionId: section.id,
                         blockId: item.i,
                         layout: {
-                        x: item.x,
-                        y: item.y,
-                        w: item.w,
-                        h: item.h,
+                            x: item.x,
+                            y: item.y,
+                            w: item.w,
+                            h: item.h,
                         },
+                        });
                     });
-                    });
-                }}
+                    }}
                 >
-
-
-
                     {section.blocks.map((block) => {
                     if (block.type === "text") {
                         return (
                         <div
                             key={block.id}
                             data-grid={{
-                                x: block.layout.x,
-                                y: block.layout.y,
-                                w: block.layout.w,
-                                h: block.layout.h,
-                                static: role !== "admin",
+                            x: block.layout.x,
+                            y: block.layout.y,
+                            w: block.layout.w,
+                            h: block.layout.h,
+                            static: role !== "admin",
                             }}
-                            style={{
-                            border: "1px dashed #ccc",
-                            padding: 8,
-                            background: "#fafafa",
-                            }}
+                            className="text-block-wrapper"
                         >
-                            <ReactMarkdown>{block.content}</ReactMarkdown>
+                            {role === "admin" && (
+                            <div className="text-editor-toolbar">
+                                <button onClick={() => document.execCommand("bold")}>
+                                B
+                                </button>
+                                <button onClick={() => document.execCommand("italic")}>
+                                I
+                                </button>
+                                <button
+                                onClick={() =>
+                                    document.execCommand("underline")
+                                }
+                                >
+                                U
+                                </button>
+                            </div>
+                            )}
 
+                            {role === "admin" ? (
+                            <div
+                                className="text-editor"
+                                contentEditable
+                                suppressContentEditableWarning
+                                dangerouslySetInnerHTML={{
+                                __html: block.content,
+                                }}
+                            />
+                            ) : (
+                            <div
+                                className="text-block"
+                                dangerouslySetInnerHTML={{
+                                __html: block.content,
+                                }}
+                            />
+                            )}
                         </div>
                         );
                     }
@@ -187,14 +203,14 @@ function PageDetail({ role }: PageDetailProps) {
                 </GridLayout>
 
                 {role === "admin" && (
-                    <div style={{ marginTop: 8 }}>
+                    <div style={{ marginTop: 12 }}>
                     <button
                         onClick={() => {
                         setEditingSectionId(section.id);
                         setSectionTitle(section.title);
                         }}
                     >
-                        Edit
+                        Edit section
                     </button>
 
                     <button
@@ -211,7 +227,7 @@ function PageDetail({ role }: PageDetailProps) {
                         }}
                         style={{ marginLeft: 8 }}
                     >
-                        Delete
+                        Delete section
                     </button>
                     </div>
                 )}
@@ -221,6 +237,6 @@ function PageDetail({ role }: PageDetailProps) {
         ))}
         </div>
     );
-    }
+}
 
 export default PageDetail;

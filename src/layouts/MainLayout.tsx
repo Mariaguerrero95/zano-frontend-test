@@ -2,36 +2,50 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 type MainLayoutProps = {
-    role: "user" | "admin";
-    onRoleChange: (role: "user" | "admin") => void;
+  role: "user" | "admin";
+  onRoleChange: (role: "user" | "admin") => void;
 };
 
 function MainLayout({ role, onRoleChange }: MainLayoutProps) {
-    return (
+  return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-        <Sidebar role={role} />
-    <main style={{ flex: 1, padding: 24 }}>
+      {/* SIDEBAR */}
+      <Sidebar role={role} />
+
+      {/* MAIN CONTENT */}
+      <main style={{ flex: 1, padding: 24, background: "#f7f8fa" }}>
         <Outlet />
-    </main>
-    <div
+      </main>
+
+      {/* ROLE SWITCH */}
+      <div
         style={{
-            position: "fixed",
-            top: 8,
-            right: 16,
-            zIndex: 1000,
-        }}>
-        <label style={{ marginRight: 8 }}>Role:</label>
+          position: "fixed",
+          top: 16,
+          right: 16,
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          padding: "8px 12px",
+          borderRadius: 8,
+          boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
+          zIndex: 1000,
+        }}
+      >
+        <label style={{ marginRight: 8, fontWeight: 500 }}>
+          Role:
+        </label>
         <select
-            value={role}
-            onChange={(e) =>
-                onRoleChange(e.target.value as "user" | "admin")
-            }>
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
+          value={role}
+          onChange={(e) =>
+            onRoleChange(e.target.value as "user" | "admin")
+          }
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
         </select>
+      </div>
     </div>
-    </div>
-    );
+  );
 }
 
 export default MainLayout;

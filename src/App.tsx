@@ -11,16 +11,22 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          element={
-            <MainLayout role={role} onRoleChange={setRole} />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/pages/:pageId" element={<PageDetail role={role} />}/>
+          path="/"
+          element={<MainLayout role={role} onRoleChange={setRole} />}
+        >
+          {/* HOME */}
+          <Route index element={<HomePage />} />
+
+          {/* PAGE DETAIL */}
+          <Route
+            path="pages/:pageId"
+            element={<PageDetail role={role} />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
   );
 }
-
 
 export default App;
 

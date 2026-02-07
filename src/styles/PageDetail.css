@@ -1,0 +1,31 @@
+.text-editor-toolbar {
+    margin-bottom: 6px;
+  }
+  
+  .text-editor-toolbar button {
+    margin-right: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .text-editor {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 8px;
+    min-height: 80px;
+  }
+  
+  .text-block {
+    line-height: 1.6;
+  }
+  
+  .text-block-wrapper {
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    padding: 8px;
+  }
+  

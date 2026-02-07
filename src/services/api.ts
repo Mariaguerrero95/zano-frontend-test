@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 /*** Fake in-memory database */
 let pages: Page[] = [
     {
-        id: uuid(),
+        id: "getting-started",
         title: "Getting Started",
         sections: [],
     },
