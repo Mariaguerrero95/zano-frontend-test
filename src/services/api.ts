@@ -2,6 +2,14 @@ import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Page, PageCategory } from "../types/guide";
 import { v4 as uuid } from "uuid";
 
+type TourStep = {
+    id: string;
+    pageId: string;
+    target: string;
+    title: string;
+    description: string;
+    order: number;
+};
 /*** Fake in-memory database */
 let pages: Page[] = [
     {
@@ -23,7 +31,6 @@ let pages: Page[] = [
         sections: [],
     },
 ];
-
 let tourSteps = [
     {
         id: "tour-1",
@@ -50,41 +57,29 @@ let tourSteps = [
         order: 2,
     },
 ];
-
 /*** Types */
 type AddSectionResponse = {
     pageId: string;
     sectionId: string;
 };
-
 type AddSectionArgs = {
     pageId: string;
     title: string;
 };
-
 type UpdateSectionArgs = {
     pageId: string;
     sectionId: string;
     title: string;
 };
-
 type DeleteSectionArgs = {
     pageId: string;
     sectionId: string;
 };
-
 type AddTextBlockArgs = {
     pageId: string;
     sectionId: string;
     content: string;
 };
-
-type AddImageBlockArgs = {
-    pageId: string;
-    sectionId: string;
-    url: string;
-};
-
 type UpdateBlockLayoutArgs = {
     pageId: string;
     sectionId: string;
@@ -96,16 +91,13 @@ type UpdateBlockLayoutArgs = {
         h: number;
     };
 };
-
 type DeletePageArgs = {
     pageId: string;
 };
-
 type UpdatePageArgs = {
     pageId: string;
     title: string;
 };
-
 type UpdateTextBlockArgs = {
     pageId: string;
     sectionId: string;
@@ -126,22 +118,19 @@ export const api = createApi({
     }),
 
     /*** POST /pages */
-    createPage: builder.mutation<
-        Page,
-        { title: string; category: PageCategory }
-        >({
-        queryFn: async ({ title, category }) => {
-            const newPage: Page = {
-            id: uuid(),
-            title,
-            category,
-            sections: [],
-            };
-            pages = [...pages, newPage];
-            return { data: newPage };
+    createPage: builder.mutation<Page, { title: string; category: PageCategory }>({
+    queryFn: async ({ title, category }) => {
+        const newPage: Page = {
+        id: uuid(),
+        title,
+        category,
+        sections: [],
+        };
+        pages = [...pages, newPage];
+        return { data: newPage };
         },
-        invalidatesTags: ["Pages"],
-        }),
+    invalidatesTags: ["Pages"],
+    }),
 
         /*** PATCH /pages/:pageId */
         updatePage: builder.mutation<void, UpdatePageArgs>({
@@ -306,46 +295,23 @@ export const api = createApi({
         }),
 
         /*** TOUR STEPS */
-        getTourSteps: builder.query<
-        {
-            id: string;
-            pageId: string;
-            target: string;
-            title: string;
-            description: string;
-            order: number;
-        }[],
-        { pageId: string }
-        >({
-        queryFn: async ({ pageId }) => ({
-            data: tourSteps
-            .filter((s) => s.pageId === pageId)
-            .sort((a, b) => a.order - b.order),
+        getTourSteps: builder.query<TourStep[], { pageId: string }>({
+            queryFn: async ({ pageId }) => ({
+                data: tourSteps
+                .filter((s) => s.pageId === pageId)
+                .sort((a, b) => a.order - b.order),
+            }),
+            providesTags: ["Pages"],
         }),
-        providesTags: ["Pages"],
-        }),
-        updateTourSteps: builder.mutation<
-    void,
-    { steps: typeof tourSteps }
-    >({
-    queryFn: async ({ steps }) => {
-        tourSteps = steps;
-        return { data: undefined };
-    },
-    invalidatesTags: ["Pages"],
-    }),
-    /*** PATCH /tour-steps */
-    updateTourSteps: builder.mutation<
-    void,
-    { steps: any[] }
-    >({
-    queryFn: async ({ steps }) => {
-        tourSteps = steps;
-        return { data: undefined };
-    },
-    invalidatesTags: ["Pages"],
-    }),
 
+    /*** PATCH /tour-steps */
+    updateTourSteps: builder.mutation<void, { steps: TourStep[] }>({
+        queryFn: async ({ steps }) => {
+            tourSteps = steps;
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+    }),
     }),
 });
 
@@ -359,10 +325,8 @@ export const {
     useUpdateSectionMutation,
     useDeleteSectionMutation,
     useAddTextBlockMutation,
-    useAddImageBlockMutation,
     useUpdateBlockLayoutMutation,
     useUpdateTextBlockMutation,
     useGetTourStepsQuery, 
     useUpdateTourStepsMutation,
-
 } = api;

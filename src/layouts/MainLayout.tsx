@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import WelcomeModal from "../components/WelcomeModal";
+
 
 type MainLayoutProps = {
   role: "user" | "admin";
@@ -11,7 +11,6 @@ function MainLayout({ role, onRoleChange }: MainLayoutProps) {
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* SIDEBAR */}
       <Sidebar role={role} />
-      <WelcomeModal role={role} />
       {/* MAIN CONTENT */}
       <main
         className={role === "admin" ? "admin-view" : "user-view"}

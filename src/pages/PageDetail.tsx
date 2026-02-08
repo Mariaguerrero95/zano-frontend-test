@@ -1,7 +1,7 @@
+import "../styles/PageDetail.css";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import GridLayout, { type Layout } from "react-grid-layout";
-
+import GridLayout from "react-grid-layout";
 import {
   useGetPagesQuery,
   useAddSectionMutation,
@@ -14,16 +14,21 @@ import {
   useGetTourStepsQuery,
   useUpdateTourStepsMutation,
 } from "../services/api";
-
 import RichTextEditor from "../components/RichTextEditor";
 import WelcomeModal from "../components/WelcomeModal";
 import GettingStartedHero from "../components/GettingStartedHero";
 import PracticePath from "../components/PracticePath";
 import GettingStartedTour from "../components/GettingStartedTour";
 import TourStepsEditor from "../components/TourStepsEditor";
+import type { TextBlock } from "../types/guide";
 
-import "../styles/PageDetail.css";
-
+type GridItemLayout = {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
 type PageDetailProps = {
   role: "user" | "admin";
 };
@@ -44,23 +49,30 @@ function PageDetail({ role }: PageDetailProps) {
   const [showWelcome, setShowWelcome] = useState(false);
   const [runTour, setRunTour] = useState(false);
   const page = pages?.find((p) => p.id === pageId) ?? pages?.[0];
-
+  const pageIdValue = page?.id;
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const AnyGridLayout = GridLayout as any;
   const { data: tourSteps = [] } = useGetTourStepsQuery(
     { pageId: page?.id ?? "" },
     { skip: !page }
   );
 
+  //* eslint-disable-next-line react-hooks/exhaustive-deps*//
   useEffect(() => {
-    if (!page) return;
+    if (!pageIdValue) return;
     if (role !== "user") return;
-    if (page.id === "getting-started") {
+
+    if (pageIdValue === "getting-started") {
       setShowWelcome(true);
       setRunTour(true);
     } else {
       setShowWelcome(false);
       setRunTour(false);
     }
-  }, [page?.id, role]);
+}, [pageIdValue, role]);
+
+  
 
   if (isLoading || !pages) return <div>Loading…</div>;
   if (!page) return <div>Page not found</div>;
@@ -127,8 +139,11 @@ function PageDetail({ role }: PageDetailProps) {
         )}
         {page.sections.map((section) => {
           const isActive = section.id === activeSectionId;
-          const blocks = section.blocks.filter((b) => b.type === "text");
-          const layout: Layout[] = blocks.map((block) => ({
+          const blocks = section.blocks.filter(
+            (b): b is TextBlock => b.type === "text"
+          );
+          
+          const layout = blocks.map((block) => ({
             i: block.id,
             x: block.layout.x,
             y: block.layout.y,
@@ -176,12 +191,11 @@ function PageDetail({ role }: PageDetailProps) {
                   Add block
                 </button>
               )}
-
               {blocks.length > 0 && (
-                <GridLayout
+                <AnyGridLayout
                   className="text-grid"
                   layout={layout}
-                  cols={12}
+                  cols={12 as number}
                   rowHeight={30}
                   width={800}
                   isDraggable={role === "admin"}
@@ -192,8 +206,8 @@ function PageDetail({ role }: PageDetailProps) {
                   margin={[12, 12]}
                   onLayoutChange={
                     role === "admin"
-                      ? (currentLayout) =>
-                          currentLayout.forEach((item) =>
+                    ? (currentLayout: GridItemLayout[]) =>
+                      currentLayout.forEach((item: GridItemLayout) =>                  
                             updateBlockLayout({
                               pageId: page.id,
                               sectionId: section.id,
@@ -208,6 +222,7 @@ function PageDetail({ role }: PageDetailProps) {
                           )
                       : undefined
                   }
+                  
                 >
                   {blocks.map((block) => (
                     <div key={block.id} className="text-block">
@@ -234,7 +249,6 @@ function PageDetail({ role }: PageDetailProps) {
                           }
                         />
                       </div>
-
                       {block.imageUrl && (
                         <img src={block.imageUrl} alt="" />
                       )}
@@ -275,7 +289,7 @@ function PageDetail({ role }: PageDetailProps) {
                       )}
                     </div>
                   ))}
-                </GridLayout>
+                </AnyGridLayout>
               )}
               {role === "admin" && (
                 <button

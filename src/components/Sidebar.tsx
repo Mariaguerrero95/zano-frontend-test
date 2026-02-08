@@ -1,6 +1,6 @@
 import "../styles/Sidebar.css";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   useGetPagesQuery,
   useCreatePageMutation,
@@ -18,20 +18,16 @@ function Sidebar({ role }: SidebarProps) {
   const [newPageTitle, setNewPageTitle] = useState("");
   const [search, setSearch] = useState("");
   const [openPageId, setOpenPageId] = useState<string | null>(null);
-
   const [createPage] = useCreatePageMutation();
   const [deletePage] = useDeletePageMutation();
   const [addSection] = useAddSectionMutation();
   const [deleteSection] = useDeleteSectionMutation();
 
-  const location = useLocation();
-
   if (isLoading) {
     return <aside className="sidebar">Loading pages…</aside>;
   }
-
-  const filteredPages = pages?.filter((page) =>
-    page.title.toLowerCase().includes(search.toLowerCase())
+    const filteredPages = pages?.filter((page) =>
+      page.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -64,7 +60,11 @@ function Sidebar({ role }: SidebarProps) {
             className="primary-button"
             onClick={() => {
               if (!newPageTitle.trim()) return;
-              createPage({ title: newPageTitle });
+              createPage({
+                title: newPageTitle,
+                category: "product-guides",
+              });
+              
               setNewPageTitle("");
             }}
           >
