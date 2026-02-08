@@ -1,31 +1,62 @@
-.page-detail {
-  padding-bottom: 80px;
+.text-grid {
+  position: relative;
 }
-.card {
-  margin-bottom: 32px;
+.react-grid-item {
+  overflow-x: hidden;
+  overflow-y: visible;
 }
-.layout {
-  width: 100%;
-}
-.grid-item {
+.text-block {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
   height: 100%;
 }
 .rich-editor {
-  height: 100%;
+  min-height: 120px;
 }
-.grid-item-inner {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.text-block img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 8px;
 }
-.section-actions {
-  margin-top: 16px;
-  display: flex;
-  gap: 8px;
+.react-resizable-handle {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  z-index: 10;
+}
+.react-resizable-handle::after {
+  border-color: white;
+}
+.text-block button {
+  align-self: flex-start;
+}
+.card {
+  margin-bottom: 24px;
+}
+.user .react-resizable-handle {
+  display: none !important;
+  pointer-events: none !important;
+}
+.user .react-grid-item {
+  pointer-events: auto;
+}
+.user .react-grid-item > * {
+  pointer-events: auto;
+}
+.block-drag-handle {
+  cursor: grab;
+  font-size: 12px;
+  color: #666;
+  user-select: none;
+  margin-bottom: 6px;
+}
+.block-drag-handle:active {
+  cursor: grabbing;
 }
 .text-block {
-  margin-bottom: 16px;
+  user-select: text;
 }
-
+.react-grid-item {
+  touch-action: auto;
+}

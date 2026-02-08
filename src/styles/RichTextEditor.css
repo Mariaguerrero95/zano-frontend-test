@@ -1,42 +1,62 @@
 .rich-editor {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     background: white;
-}
-.editor-toolbar {
     display: flex;
+    flex-direction: column;
+  }
+  .editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     padding: 8px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--color-border);
     background: #f9fafb;
-    flex-wrap: wrap;
-}
-.editor-content {
-    flex: 1;
-    min-height: 120px;
-    padding: 8px;
-    overflow-y: auto;
-}
-.editor-content:focus {
-    outline: none;
-}
-.color-picker {
+  }
+  .editor-toolbar button {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .editor-toolbar button:hover {
+    background: #eef2ff;
+  }
+  .editor-content {
+    padding: 12px;
+    font-size: 15px;
+    line-height: 1.7;
+    cursor: text;
+  }
+  .editor-content p {
+    margin-bottom: 12px;
+  }
+  .editor-content h1 {
+    font-size: 28px;
+    margin: 24px 0 12px;
+  }
+  .editor-content h2 {
+    font-size: 22px;
+    margin: 20px 0 10px;
+  }
+  .editor-content h3 {
+    font-size: 18px;
+    margin: 16px 0 8px;
+  }
+  .color-picker {
     position: relative;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #ddd;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     background: white;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.color-picker input {
+  }
+  .color-picker input {
     position: absolute;
     inset: 0;
     opacity: 0;
-}
+  }
+  

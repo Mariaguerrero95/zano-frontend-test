@@ -11,7 +11,14 @@ function MainLayout({ role, onRoleChange }: MainLayoutProps) {
       {/* SIDEBAR */}
       <Sidebar role={role} />
       {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: 24, background: "#f7f8fa" }}>
+      <main
+        className={role === "admin" ? "admin-view" : "user-view"}
+        style={{
+          flex: 1,
+          background: "#f7f8fa",
+          padding: "32px",   // 👈 CLAVE
+        }}
+      >
         <Outlet />
       </main>
       {/* ROLE SWITCH */}

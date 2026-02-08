@@ -86,3 +86,8 @@
     color: var(--color-third);
     font-style: italic;
 }
+.sidebar-subtitle {
+    font-size: 12px;
+    color: var(--color-third);
+    margin-bottom: 16px;
+}

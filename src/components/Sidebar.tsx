@@ -27,8 +27,10 @@ function Sidebar({ role }: SidebarProps) {
   return (
     <aside className="sidebar">
       <h1 className="sidebar-title">
-        <Link to="/">Zano Help Center</Link>
-      </h1>
+  <Link to="/">Zano Atlas</Link>
+</h1>
+<p className="sidebar-subtitle">Knowledge Base</p>
+
       {/* 🔍 SEARCH */}
       <input
         className="sidebar-search"

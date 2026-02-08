@@ -10,3 +10,57 @@ body {
   background-color: #ffffff;
   color: #000000;
 }
+/* ================= HOME ================= */
+
+.home-hero {
+  max-width: 960px;
+  margin: 80px auto;
+}
+
+.home-hero h1 {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.home-subtitle {
+  font-size: 18px;
+  color: var(--color-third);
+  margin-bottom: 40px;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.home-card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.home-card h3 {
+  margin-bottom: 8px;
+}
+
+/* ================= LAYOUT ================= */
+
+.user-view {
+  padding: 48px 24px;
+}
+
+.admin-view {
+  padding: 24px;
+}
+
+.user-view .card {
+  max-width: 900px;
+  margin: 0 auto 48px;
+}
+
+.user-view h2 {
+  font-size: 32px;
+  margin-bottom: 24px;
+}

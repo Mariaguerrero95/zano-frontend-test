@@ -5,12 +5,11 @@ import { v4 as uuid } from "uuid";
 /*** Fake in-memory database */
 let pages: Page[] = [
     {
-        id: "getting-started",
-        title: "Getting Started",
-        sections: [],
+    id: "getting-started",
+    title: "Getting Started",
+    sections: [],
     },
 ];
-
 /*** Types */
 type AddSectionResponse = {
     pageId: string;
@@ -34,6 +33,11 @@ type AddTextBlockArgs = {
     sectionId: string;
     content: string;
 };
+type AddImageBlockArgs = {
+    pageId: string;
+    sectionId: string;
+    url: string;
+};
 type UpdateBlockLayoutArgs = {
     pageId: string;
     sectionId: string;
@@ -43,7 +47,7 @@ type UpdateBlockLayoutArgs = {
         y: number;
         w: number;
         h: number;
-    };
+        };
 };
 type DeletePageArgs = {
     pageId: string;
@@ -53,207 +57,236 @@ type UpdateTextBlockArgs = {
     sectionId: string;
     blockId: string;
     content: string;
+    imageUrl?: string; 
 };
-
 
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fakeBaseQuery(),
     tagTypes: ["Pages"],
     endpoints: (builder) => ({
-    /*** GET /pages */
-    getPages: builder.query<Page[], void>({
-    queryFn: async () => {
-        return { data: pages };
-    },
-    providesTags: ["Pages"],
-    }),
+        /*** GET /pages */
+        getPages: builder.query<Page[], void>({
+        queryFn: async () => {
+            return { data: pages };
+        },
+        providesTags: ["Pages"],
+        }),
 
-    /*** POST /pages */
-    createPage: builder.mutation<Page, { title: string }>({
+        /*** POST /pages */
+        createPage: builder.mutation<Page, { title: string }>({
         queryFn: async ({ title }) => {
             const newPage: Page = {
             id: uuid(),
             title,
             sections: [],
-        };
+            };
 
-        pages = [...pages, newPage];
-
-        return { data: newPage };
-    },
-    invalidatesTags: ["Pages"],
-    }),
-
-    /*** DELETE /pages/:pageId */
-    deletePage: builder.mutation<void, DeletePageArgs>({
-        queryFn: async ({ pageId }) => {
-        pages = pages.filter((page) => page.id !== pageId);
-        return { data: undefined };
+            pages = [...pages, newPage];
+            return { data: newPage };
         },
         invalidatesTags: ["Pages"],
-    }),
+        }),
 
-    /*** POST /pages/:pageId/sections */
-    addSection: builder.mutation<AddSectionResponse, AddSectionArgs>({
+        /*** DELETE /pages/:pageId */
+        deletePage: builder.mutation<void, DeletePageArgs>({
+        queryFn: async ({ pageId }) => {
+            pages = pages.filter((page) => page.id !== pageId);
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** POST /pages/:pageId/sections */
+        addSection: builder.mutation<AddSectionResponse, AddSectionArgs>({
         queryFn: async ({ pageId, title }) => {
-        const newSection = {
+            const newSection = {
             id: uuid(),
             title,
             blocks: [],
-        };
+            };
 
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: [...page.sections, newSection],
-            }
-            : page
-        );
-
-        return {
-            data: {
-            pageId,
-            sectionId: newSection.id,
-        },
-        };
-    },
-    invalidatesTags: ["Pages"],
-    }),
-
-    /*** PATCH /pages/:pageId/sections/:sectionId */
-    updateSection: builder.mutation<void, UpdateSectionArgs>({
-        queryFn: async ({ pageId, sectionId, title }) => {
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: page.sections.map((section) =>
-                    section.id === sectionId
-                    ? { ...section, title }
-                    : section
-                ),
-            }
-            : page
-        );
-
-        return { data: undefined };
-    },
-        invalidatesTags: ["Pages"],
-    }),
-
-    /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/layout */
-    updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
-        queryFn: async ({ pageId, sectionId, blockId, layout }) => {
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: page.sections.map((section) =>
-                    section.id === sectionId
-                    ? {
-                        ...section,
-                        blocks: section.blocks.map((block) =>
-                            block.id === blockId
-                            ? { ...block, layout }
-                            : block
-                        ),
-                        }
-                    : section
-                ),
-                }
-            : page
-        );
-    
-        return { data: undefined };
-        },
-        invalidatesTags: ["Pages"],
-    }),
-    
-    /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/content */
-    updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
-        queryFn: async ({ pageId, sectionId, blockId, content }) => {
-        pages = pages.map((page) =>
-            page.id === pageId
-            ? {
-                ...page,
-                sections: page.sections.map((section) =>
-                    section.id === sectionId
-                    ? {
-                        ...section,
-                        blocks: section.blocks.map((block) =>
-                            block.id === blockId
-                            ? { ...block, content }
-                            : block
-                        ),
-                        }
-                    : section
-                ),
-                }
-            : page
-        );
-    
-        return { data: undefined };
-    },
-    invalidatesTags: ["Pages"],
-    }),
-
-    /*** DELETE /pages/:pageId/sections/:sectionId */
-    deleteSection: builder.mutation<void, DeleteSectionArgs>({
-        queryFn: async ({ pageId, sectionId }) => {
             pages = pages.map((page) =>
-                page.id === pageId
-                ? {
-                    ...page,
-                    sections: page.sections.filter(
-                        (section) => section.id !== sectionId
-                    ),
-                    }
+            page.id === pageId
+                ? { ...page, sections: [...page.sections, newSection] }
                 : page
             );
-    
-        return { data: undefined };
+
+            return {
+            data: { pageId, sectionId: newSection.id },
+            };
         },
         invalidatesTags: ["Pages"],
-    }),
-    /*** POST /pages/:pageId/sections/:sectionId/blocks/text */
-    addTextBlock: builder.mutation<void, AddTextBlockArgs>({
-        queryFn: async ({ pageId, sectionId, content }) => {
+        }),
+
+        /*** PATCH /pages/:pageId/sections/:sectionId */
+        updateSection: builder.mutation<void, UpdateSectionArgs>({
+        queryFn: async ({ pageId, sectionId, title }) => {
             pages = pages.map((page) =>
-                page.id === pageId
+            page.id === pageId
                 ? {
                     ...page,
                     sections: page.sections.map((section) =>
-                        section.id === sectionId
+                    section.id === sectionId
+                        ? { ...section, title }
+                        : section
+                    ),
+                }
+                : page
+            );
+
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/layout */
+        updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
+        queryFn: async ({ pageId, sectionId, blockId, layout }) => {
+            pages = pages.map((page) =>
+            page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.map((section) =>
+                    section.id === sectionId
+                        ? {
+                            ...section,
+                            blocks: section.blocks.map((block) =>
+                            block.id === blockId
+                                ? { ...block, layout }
+                                : block
+                            ),
+                        }
+                        : section
+                    ),
+                }
+                : page
+            );
+
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/content */
+        updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
+            queryFn: async ({ pageId, sectionId, blockId, content, imageUrl }) => {
+                pages = pages.map((page) =>
+                    page.id === pageId
+                    ? {
+                        ...page,
+                        sections: page.sections.map((section) =>
+                            section.id === sectionId
+                            ? {
+                                ...section,
+                                blocks: section.blocks.map((block) =>
+                                    block.id === blockId
+                                    ? { ...block, content, imageUrl }
+                                    : block
+                                ),
+                                }
+                            : section
+                        ),
+                        }
+                    : page
+                );
+                return { data: undefined };
+                },
+            invalidatesTags: ["Pages"],
+            }),
+
+        /*** DELETE /pages/:pageId/sections/:sectionId */
+        deleteSection: builder.mutation<void, DeleteSectionArgs>({
+        queryFn: async ({ pageId, sectionId }) => {
+            pages = pages.map((page) =>
+            page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.filter(
+                    (section) => section.id !== sectionId
+                    ),
+                }
+                : page
+            );
+
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** POST /pages/:pageId/sections/:sectionId/blocks/text */
+        addTextBlock: builder.mutation<void, AddTextBlockArgs>({
+        queryFn: async ({ pageId, sectionId, content }) => {
+            pages = pages.map((page) =>
+            page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.map((section) =>
+                    section.id === sectionId
                         ? {
                             ...section,
                             blocks: [
-                                ...section.blocks,
-                                {
+                            ...section.blocks,
+                            {
                                 id: uuid(),
                                 type: "text",
                                 content,
                                 layout: {
-                                    x: 0,
-                                    y: section.blocks.length * 2, // 🔥 CLAVE
-                                    w: 6,
-                                    h: 3,
-                                    },
+                                x: 0,
+                                y: section.blocks.length * 2,
+                                w: 6,
+                                h: 3,
                                 },
+                            },
                             ],
-                            }
+                        }
                         : section
                     ),
-                    }
+                }
                 : page
             );
-        
-        return { data: undefined };
-    },
-    invalidatesTags: ["Pages"],
+
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** POST /pages/:pageId/sections/:sectionId/blocks/image */
+        addImageBlock: builder.mutation<void, AddImageBlockArgs>({
+        queryFn: async ({ pageId, sectionId, url }) => {
+            pages = pages.map((page) =>
+            page.id === pageId
+                ? {
+                    ...page,
+                    sections: page.sections.map((section) =>
+                    section.id === sectionId
+                        ? {
+                            ...section,
+                            blocks: [
+                            ...section.blocks,
+                            {
+                                id: uuid(),
+                                type: "image",
+                                url,
+                                layout: {
+                                x: 0,
+                                y: section.blocks.length * 2,
+                                w: 6,
+                                h: 4,
+                                },
+                            },
+                            ],
+                        }
+                        : section
+                    ),
+                }
+                : page
+            );
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
     }),
-}),
 });
 
 /*** Hooks generated by RTK Query */
@@ -265,7 +298,7 @@ export const {
     useDeleteSectionMutation,
     useDeletePageMutation,
     useAddTextBlockMutation,
+    useAddImageBlockMutation,     
     useUpdateBlockLayoutMutation,
     useUpdateTextBlockMutation,
 } = api;
-
