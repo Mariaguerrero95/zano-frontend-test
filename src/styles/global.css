@@ -1,11 +1,15 @@
 :root {
-    --color-primary: #2563eb;
-    --color-secondary: #f7f8fa;
+    --color-primary: #5b8c7a;        /* verde calmado */
+    --color-secondary: #f3f7f5;      /* fondo suave */
     --color-surface: #ffffff;
-    --color-border: #e5e7eb;
-    --color-text: #111827;
+    --color-border: #e2e8f0;
+    --color-text: #1f2933;
     --color-third: #6b7280;
-}
+  
+    --radius-lg: 16px;
+    --radius-md: 12px;
+  }
+  
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;

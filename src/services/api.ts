@@ -1,43 +1,90 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Page } from "../types/guide";
+import type { Page, PageCategory } from "../types/guide";
 import { v4 as uuid } from "uuid";
 
 /*** Fake in-memory database */
 let pages: Page[] = [
     {
-    id: "getting-started",
-    title: "Getting Started",
-    sections: [],
+        id: "getting-started",
+        title: "Getting Started",
+        category: "getting-started",
+        sections: [],
+    },
+    {
+        id: "product-guides",
+        title: "Practice Guides",
+        category: "product-guides",
+        sections: [],
+    },
+    {
+        id: "faq",
+        title: "FAQ",
+        category: "faq",
+        sections: [],
     },
 ];
+
+let tourSteps = [
+    {
+        id: "tour-1",
+        pageId: "getting-started",
+        target: ".page-hero",
+        title: "Welcome 🌿",
+        description: "This is where your yoga journey begins.",
+        order: 0,
+    },
+    {
+        id: "tour-2",
+        pageId: "getting-started",
+        target: ".practice-path",
+        title: "Your guided path",
+        description: "Follow these steps at your own pace.",
+        order: 1,
+    },
+    {
+        id: "tour-3",
+        pageId: "getting-started",
+        target: ".card",
+        title: "Practice content",
+        description: "Each section contains practical guidance.",
+        order: 2,
+    },
+];
+
 /*** Types */
 type AddSectionResponse = {
     pageId: string;
     sectionId: string;
 };
+
 type AddSectionArgs = {
     pageId: string;
     title: string;
 };
+
 type UpdateSectionArgs = {
     pageId: string;
     sectionId: string;
     title: string;
 };
+
 type DeleteSectionArgs = {
     pageId: string;
     sectionId: string;
 };
+
 type AddTextBlockArgs = {
     pageId: string;
     sectionId: string;
     content: string;
 };
+
 type AddImageBlockArgs = {
     pageId: string;
     sectionId: string;
     url: string;
 };
+
 type UpdateBlockLayoutArgs = {
     pageId: string;
     sectionId: string;
@@ -47,17 +94,24 @@ type UpdateBlockLayoutArgs = {
         y: number;
         w: number;
         h: number;
-        };
+    };
 };
+
 type DeletePageArgs = {
     pageId: string;
 };
+
+type UpdatePageArgs = {
+    pageId: string;
+    title: string;
+};
+
 type UpdateTextBlockArgs = {
     pageId: string;
     sectionId: string;
     blockId: string;
     content: string;
-    imageUrl?: string; 
+    imageUrl?: string;
 };
 
 export const api = createApi({
@@ -67,23 +121,35 @@ export const api = createApi({
     endpoints: (builder) => ({
         /*** GET /pages */
         getPages: builder.query<Page[], void>({
-        queryFn: async () => {
-            return { data: pages };
-        },
+        queryFn: async () => ({ data: pages }),
         providesTags: ["Pages"],
-        }),
+    }),
 
-        /*** POST /pages */
-        createPage: builder.mutation<Page, { title: string }>({
-        queryFn: async ({ title }) => {
+    /*** POST /pages */
+    createPage: builder.mutation<
+        Page,
+        { title: string; category: PageCategory }
+        >({
+        queryFn: async ({ title, category }) => {
             const newPage: Page = {
             id: uuid(),
             title,
+            category,
             sections: [],
             };
-
             pages = [...pages, newPage];
             return { data: newPage };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** PATCH /pages/:pageId */
+        updatePage: builder.mutation<void, UpdatePageArgs>({
+        queryFn: async ({ pageId, title }) => {
+            pages = pages.map((p) =>
+            p.id === pageId ? { ...p, title } : p
+            );
+            return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
@@ -91,201 +157,195 @@ export const api = createApi({
         /*** DELETE /pages/:pageId */
         deletePage: builder.mutation<void, DeletePageArgs>({
         queryFn: async ({ pageId }) => {
-            pages = pages.filter((page) => page.id !== pageId);
+            pages = pages.filter((p) => p.id !== pageId);
             return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
 
-        /*** POST /pages/:pageId/sections */
+        /*** SECTIONS */
         addSection: builder.mutation<AddSectionResponse, AddSectionArgs>({
         queryFn: async ({ pageId, title }) => {
-            const newSection = {
-            id: uuid(),
-            title,
-            blocks: [],
-            };
-
-            pages = pages.map((page) =>
-            page.id === pageId
-                ? { ...page, sections: [...page.sections, newSection] }
-                : page
+            const newSection = { id: uuid(), title, blocks: [] };
+            pages = pages.map((p) =>
+            p.id === pageId
+                ? { ...p, sections: [...p.sections, newSection] }
+                : p
             );
-
-            return {
-            data: { pageId, sectionId: newSection.id },
-            };
+            return { data: { pageId, sectionId: newSection.id } };
         },
         invalidatesTags: ["Pages"],
         }),
 
-        /*** PATCH /pages/:pageId/sections/:sectionId */
         updateSection: builder.mutation<void, UpdateSectionArgs>({
         queryFn: async ({ pageId, sectionId, title }) => {
-            pages = pages.map((page) =>
-            page.id === pageId
+            pages = pages.map((p) =>
+            p.id === pageId
                 ? {
-                    ...page,
-                    sections: page.sections.map((section) =>
-                    section.id === sectionId
-                        ? { ...section, title }
-                        : section
+                    ...p,
+                    sections: p.sections.map((s) =>
+                    s.id === sectionId ? { ...s, title } : s
                     ),
                 }
-                : page
+                : p
             );
-
             return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
 
-        /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/layout */
-        updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
-        queryFn: async ({ pageId, sectionId, blockId, layout }) => {
-            pages = pages.map((page) =>
-            page.id === pageId
-                ? {
-                    ...page,
-                    sections: page.sections.map((section) =>
-                    section.id === sectionId
-                        ? {
-                            ...section,
-                            blocks: section.blocks.map((block) =>
-                            block.id === blockId
-                                ? { ...block, layout }
-                                : block
-                            ),
-                        }
-                        : section
-                    ),
-                }
-                : page
-            );
-
-            return { data: undefined };
-        },
-        invalidatesTags: ["Pages"],
-        }),
-
-        /*** PATCH /pages/:pageId/sections/:sectionId/blocks/:blockId/content */
-        updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
-            queryFn: async ({ pageId, sectionId, blockId, content, imageUrl }) => {
-                pages = pages.map((page) =>
-                    page.id === pageId
-                    ? {
-                        ...page,
-                        sections: page.sections.map((section) =>
-                            section.id === sectionId
-                            ? {
-                                ...section,
-                                blocks: section.blocks.map((block) =>
-                                    block.id === blockId
-                                    ? { ...block, content, imageUrl }
-                                    : block
-                                ),
-                                }
-                            : section
-                        ),
-                        }
-                    : page
-                );
-                return { data: undefined };
-                },
-            invalidatesTags: ["Pages"],
-            }),
-
-        /*** DELETE /pages/:pageId/sections/:sectionId */
         deleteSection: builder.mutation<void, DeleteSectionArgs>({
         queryFn: async ({ pageId, sectionId }) => {
-            pages = pages.map((page) =>
-            page.id === pageId
+            pages = pages.map((p) =>
+            p.id === pageId
                 ? {
-                    ...page,
-                    sections: page.sections.filter(
-                    (section) => section.id !== sectionId
+                    ...p,
+                    sections: p.sections.filter(
+                    (s) => s.id !== sectionId
                     ),
                 }
-                : page
+                : p
             );
-
             return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
 
-        /*** POST /pages/:pageId/sections/:sectionId/blocks/text */
+        /*** BLOCKS */
         addTextBlock: builder.mutation<void, AddTextBlockArgs>({
         queryFn: async ({ pageId, sectionId, content }) => {
-            pages = pages.map((page) =>
-            page.id === pageId
+            pages = pages.map((p) =>
+            p.id === pageId
                 ? {
-                    ...page,
-                    sections: page.sections.map((section) =>
-                    section.id === sectionId
+                    ...p,
+                    sections: p.sections.map((s) =>
+                    s.id === sectionId
                         ? {
-                            ...section,
+                            ...s,
                             blocks: [
-                            ...section.blocks,
+                            ...s.blocks,
                             {
                                 id: uuid(),
                                 type: "text",
                                 content,
                                 layout: {
                                 x: 0,
-                                y: section.blocks.length * 2,
+                                y: s.blocks.length * 2,
                                 w: 6,
                                 h: 3,
                                 },
                             },
                             ],
                         }
-                        : section
+                        : s
                     ),
                 }
-                : page
+                : p
             );
-
             return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
 
-        /*** POST /pages/:pageId/sections/:sectionId/blocks/image */
-        addImageBlock: builder.mutation<void, AddImageBlockArgs>({
-        queryFn: async ({ pageId, sectionId, url }) => {
-            pages = pages.map((page) =>
-            page.id === pageId
+        updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
+        queryFn: async ({
+            pageId,
+            sectionId,
+            blockId,
+            content,
+            imageUrl,
+        }) => {
+            pages = pages.map((p) =>
+            p.id === pageId
                 ? {
-                    ...page,
-                    sections: page.sections.map((section) =>
-                    section.id === sectionId
+                    ...p,
+                    sections: p.sections.map((s) =>
+                    s.id === sectionId
                         ? {
-                            ...section,
-                            blocks: [
-                            ...section.blocks,
-                            {
-                                id: uuid(),
-                                type: "image",
-                                url,
-                                layout: {
-                                x: 0,
-                                y: section.blocks.length * 2,
-                                w: 6,
-                                h: 4,
-                                },
-                            },
-                            ],
+                            ...s,
+                            blocks: s.blocks.map((b) =>
+                            b.id === blockId
+                                ? { ...b, content, imageUrl }
+                                : b
+                            ),
                         }
-                        : section
+                        : s
                     ),
                 }
-                : page
+                : p
             );
             return { data: undefined };
         },
         invalidatesTags: ["Pages"],
         }),
+
+        updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
+        queryFn: async ({ pageId, sectionId, blockId, layout }) => {
+            pages = pages.map((p) =>
+            p.id === pageId
+                ? {
+                    ...p,
+                    sections: p.sections.map((s) =>
+                    s.id === sectionId
+                        ? {
+                            ...s,
+                            blocks: s.blocks.map((b) =>
+                            b.id === blockId
+                                ? { ...b, layout }
+                                : b
+                            ),
+                        }
+                        : s
+                    ),
+                }
+                : p
+            );
+            return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+        }),
+
+        /*** TOUR STEPS */
+        getTourSteps: builder.query<
+        {
+            id: string;
+            pageId: string;
+            target: string;
+            title: string;
+            description: string;
+            order: number;
+        }[],
+        { pageId: string }
+        >({
+        queryFn: async ({ pageId }) => ({
+            data: tourSteps
+            .filter((s) => s.pageId === pageId)
+            .sort((a, b) => a.order - b.order),
+        }),
+        providesTags: ["Pages"],
+        }),
+        updateTourSteps: builder.mutation<
+    void,
+    { steps: typeof tourSteps }
+    >({
+    queryFn: async ({ steps }) => {
+        tourSteps = steps;
+        return { data: undefined };
+    },
+    invalidatesTags: ["Pages"],
+    }),
+    /*** PATCH /tour-steps */
+    updateTourSteps: builder.mutation<
+    void,
+    { steps: any[] }
+    >({
+    queryFn: async ({ steps }) => {
+        tourSteps = steps;
+        return { data: undefined };
+    },
+    invalidatesTags: ["Pages"],
+    }),
+
     }),
 });
 
@@ -293,12 +353,16 @@ export const api = createApi({
 export const {
     useGetPagesQuery,
     useCreatePageMutation,
+    useUpdatePageMutation,
+    useDeletePageMutation,
     useAddSectionMutation,
     useUpdateSectionMutation,
     useDeleteSectionMutation,
-    useDeletePageMutation,
     useAddTextBlockMutation,
-    useAddImageBlockMutation,     
+    useAddImageBlockMutation,
     useUpdateBlockLayoutMutation,
     useUpdateTextBlockMutation,
+    useGetTourStepsQuery, 
+    useUpdateTourStepsMutation,
+
 } = api;

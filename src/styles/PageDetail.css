@@ -1,5 +1,6 @@
 .text-grid {
   position: relative;
+  text-transform: uppercase;
 }
 .react-grid-item {
   overflow-x: hidden;
@@ -10,6 +11,9 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
+  background: #fafdfc;
+  padding: 16px;
+  border-radius: 12px;
 }
 .rich-editor {
   min-height: 120px;
@@ -59,4 +63,93 @@
 }
 .react-grid-item {
   touch-action: auto;
+}
+.page-detail {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* TITLES */
+.user-view h2 {
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 40px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.user-view h3 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #374151;
+}
+
+/* CARD */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 40px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+}
+
+/* BUTTONS */
+.page-detail button {
+  margin-bottom: 16px;
+}
+
+/* GRID */
+.text-grid {
+  margin-top: 16px;
+}
+.page-hero {
+  max-width: 720px;
+  margin-bottom: 64px;
+}
+
+.page-eyebrow {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.page-hero-title {
+  font-size: 30px;
+  font-weight: 200;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.page-hero-text {
+  font-size: 18px;
+  color: var(--color-third);
+  line-height: 1.7;
+}
+.practice-path {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 64px;
+}
+.practice-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.practice-card h3 {
+  margin-bottom: 8px;
+}
+.practice-card:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+}
+.card.active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }

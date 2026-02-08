@@ -19,12 +19,28 @@ export type Section = {
     title: string;
     blocks: Block[];
 };
+export type PageCategory =
+    | "getting-started"
+    | "product-guides"
+    | "faq";
+    
 export type Page = {
     id: string;
     title: string;
+    category: PageCategory;
     sections: Section[];
 };
 export type ImageBlock = BaseBlock & {
     type: "image";
     url: string;
 };
+export type GuideTourStep = {
+    id: string;
+    pageId: string;
+    target: string;
+    title: string;
+    description: string;
+    order: number;
+};
+
+

@@ -46,7 +46,6 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
   }, [editable, editor]);
   useEffect(() => {
     if (!editor || !editable) return;
-
     const handler = () => {
       onChange(editor.getHTML());
     };
@@ -56,7 +55,6 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
     };
   }, [editor, editable, onChange]);
   if (!editor) return null;
-
   const prevent = (e: React.MouseEvent) => e.preventDefault();
   const applyLinkToSelection = () => {
     if (!editable) return;
@@ -91,7 +89,6 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleStrike().run()}>
             <s>S</s>
           </button>
-
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
             H1
           </button>
@@ -101,18 +98,15 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
             H3
           </button>
-
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleBulletList().run()}>
             • List
           </button>
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
             1. List
           </button>
-
           <button onMouseDown={prevent} onClick={applyLinkToSelection}>
             🔗
           </button>
-
           <input
             type="color"
             onMouseDown={prevent}
@@ -123,7 +117,6 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
           />
         </div>
       )}
-
       <EditorContent editor={editor} className="editor-content" />
     </div>
   );
