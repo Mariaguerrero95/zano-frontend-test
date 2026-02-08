@@ -1,5 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Page, PageCategory } from "../types/guide";
+import type { Page, PageCategory, PageMood, MoodLevel } from "../types/guide";
 import { v4 as uuid } from "uuid";
 
 type TourStep = {
@@ -57,6 +57,7 @@ let tourSteps = [
         order: 2,
     },
 ];
+let pageMoods: PageMood[] = [];
 /*** Types */
 type AddSectionResponse = {
     pageId: string;
@@ -116,7 +117,6 @@ export const api = createApi({
         queryFn: async () => ({ data: pages }),
         providesTags: ["Pages"],
     }),
-
     /*** POST /pages */
     createPage: builder.mutation<Page, { title: string; category: PageCategory }>({
     queryFn: async ({ title, category }) => {
@@ -312,6 +312,26 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
     }),
+    /*** PAGE MOOD */
+    getPageMood: builder.query<PageMood | null, { pageId: string }>({
+        queryFn: async ({ pageId }) => ({
+        data: pageMoods.find((m) => m.pageId === pageId) ?? null,
+        }),
+        providesTags: ["Pages"],
+    }),
+    
+    setPageMood: builder.mutation<void, { pageId: string; mood: MoodLevel }>({
+        queryFn: async ({ pageId, mood }) => {
+        pageMoods = pageMoods.filter((m) => m.pageId !== pageId);
+        pageMoods.push({
+            pageId,
+            mood,
+            createdAt: Date.now(),
+        });
+        return { data: undefined };
+        },
+        invalidatesTags: ["Pages"],
+    }),
     }),
 });
 
@@ -329,4 +349,6 @@ export const {
     useUpdateTextBlockMutation,
     useGetTourStepsQuery, 
     useUpdateTourStepsMutation,
+    useGetPageMoodQuery,
+    useSetPageMoodMutation,
 } = api;

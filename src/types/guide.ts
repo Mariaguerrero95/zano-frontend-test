@@ -42,5 +42,19 @@ export type GuideTourStep = {
     description: string;
     order: number;
 };
+// --- User feedback / mood ---
+export type MoodLevel =
+    | "very_bad"
+    | "bad"
+    | "neutral"
+    | "good"
+    | "very_good";
+
+export type PageMood = {
+    pageId: string;
+    mood: MoodLevel;
+    createdAt: number;
+};
+
 
 

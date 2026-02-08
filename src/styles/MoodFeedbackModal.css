@@ -1,0 +1,70 @@
+.mood-container{
+    margin-top:48px;
+    padding:32px;
+    background:white;
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,0.08);
+    text-align:center;
+}
+    .mood-title{
+    font-size:18px;
+    font-weight:500;
+    margin-bottom:24px;
+}
+    .mood-options{
+    display:flex;
+    justify-content:center;
+    gap:32px;
+}
+    .mood-button{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:12px;
+    border-radius:12px;
+    position:relative;
+    transition:opacity .3s ease;
+    will-change:transform,opacity;
+}
+    .mood-button:hover{
+    background:rgba(0,0,0,0.04);
+}
+    .mood-emoji{
+    font-size:36px;
+    display:block;
+    will-change:transform;
+}
+    .mood-label{
+    font-size:14px;
+    color:#6b7280;
+    margin-top:6px;
+}
+    .mood-button.active{
+    animation:floatCelebrate .9s cubic-bezier(.22,1,.36,1) forwards;
+}
+    @keyframes floatCelebrate{
+    0%{transform:scale(1) translateY(0);}
+    35%{transform:scale(2) translateY(-44px);}
+    65%{transform:scale(1.5) translateY(-20px);}
+    100%{transform:scale(1.25) translateY(0);}
+}
+    .mood-button:disabled:not(.active){
+    opacity:0;
+    pointer-events:none;
+}
+    .mood-thanks{
+    margin-top:24px;
+    animation:fadeUp .4s ease;
+}
+    @keyframes fadeUp{
+    from{opacity:0;transform:translateY(12px);}
+    to{opacity:1;transform:translateY(0);}
+}
+    .mood-thanks h3{
+    font-size:22px;
+    margin-bottom:8px;
+}
+    .mood-thanks p{
+    font-size:15px;
+    color:#6b7280;
+}

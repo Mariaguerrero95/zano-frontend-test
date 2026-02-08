@@ -1,4 +1,5 @@
 import "../styles/PageDetail.css";
+import "../styles/MoodFeedbackModal.css";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import GridLayout from "react-grid-layout";
@@ -20,6 +21,7 @@ import GettingStartedHero from "../components/GettingStartedHero";
 import PracticePath from "../components/PracticePath";
 import GettingStartedTour from "../components/GettingStartedTour";
 import TourStepsEditor from "../components/TourStepsEditor";
+import MoodFeedback from "../components/MoodFeedbackModal";
 import type { TextBlock } from "../types/guide";
 
 type GridItemLayout = {
@@ -50,7 +52,7 @@ function PageDetail({ role }: PageDetailProps) {
   const [runTour, setRunTour] = useState(false);
   const page = pages?.find((p) => p.id === pageId) ?? pages?.[0];
   const pageIdValue = page?.id;
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const AnyGridLayout = GridLayout as any;
   const { data: tourSteps = [] } = useGetTourStepsQuery(
@@ -306,6 +308,9 @@ function PageDetail({ role }: PageDetailProps) {
             </div>
           );
         })}
+        {role === "user" && page && (
+        <MoodFeedback pageId={page.id} open={true} onClose={() => {}} />
+        )}
       </div>
     </>
   );
