@@ -12,6 +12,7 @@
     --radius-sm: 8px;
 }
 body {
+    height: 100%;
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: linear-gradient(
@@ -96,3 +97,4 @@ button.danger {
     color: var(--color-primary);
     font-weight: 500;
 }
+

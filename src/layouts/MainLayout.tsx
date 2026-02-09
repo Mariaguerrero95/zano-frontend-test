@@ -25,7 +25,6 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
         className={role === "admin" ? "admin-view" : "user-view"}
         style={{
           flex: 1,
-          padding: "32px",
         }}
       >
         <Outlet />
