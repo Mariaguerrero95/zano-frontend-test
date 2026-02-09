@@ -93,18 +93,20 @@ function Sidebar({ role }: SidebarProps) {
 
           return (
             <li key={page.id}>
-              <div
-                className="sidebar-item"
+            <div className="sidebar-item">
+              <Link
+                to={`/pages/${page.id}`}
                 onClick={() => setOpenPageId(isOpen ? null : page.id)}
+                style={{ flex: 1 }}
               >
-                <span>{page.title}</span>
-
+                {page.title}
+              </Link>
                 {page.sections.length > 0 && (
-                  <span
-                    className={`sidebar-arrow ${isOpen ? "open" : ""}`}
-                  >
-                    ▾
-                  </span>
+              <span
+                className={`sidebar-arrow ${isOpen ? "open" : ""}`}
+              >
+                ▾
+              </span>
                 )}
 
                 {role === "admin" && (
