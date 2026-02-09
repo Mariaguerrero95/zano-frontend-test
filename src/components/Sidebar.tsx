@@ -7,7 +7,11 @@ import {
   useDeletePageMutation,
   useAddSectionMutation,
   useDeleteSectionMutation,
+  useGetUiSettingsQuery,
+  useUpdateSidebarAudioMutation,
 } from "../services/api";
+import SidebarAudioPlayer from "./SidebarAudioPlayer";
+import relaxAudio from "../assets/relax.wav";
 
 type SidebarProps = {
   role: "user" | "admin";
@@ -18,20 +22,30 @@ function Sidebar({ role }: SidebarProps) {
   const [newPageTitle, setNewPageTitle] = useState("");
   const [search, setSearch] = useState("");
   const [openPageId, setOpenPageId] = useState<string | null>(null);
+
   const [createPage] = useCreatePageMutation();
   const [deletePage] = useDeletePageMutation();
   const [addSection] = useAddSectionMutation();
   const [deleteSection] = useDeleteSectionMutation();
 
+  const { data: uiSettings } = useGetUiSettingsQuery();
+  const [updateSidebarAudio] = useUpdateSidebarAudioMutation();
+
+  const showAudio = uiSettings?.sidebarAudioEnabled ?? true;
+
   if (isLoading) {
     return <aside className="sidebar">Loading pages…</aside>;
   }
-    const filteredPages = pages?.filter((page) =>
-      page.title.toLowerCase().includes(search.toLowerCase())
+
+  const filteredPages = pages?.filter((page) =>
+    page.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <aside className="sidebar">
+    <aside
+      className="sidebar"
+      style={{ display: "flex", flexDirection: "column" }}
+    >
       <h1 className="sidebar-title">
         <Link to="/">Asana Atlas</Link>
       </h1>
@@ -64,7 +78,6 @@ function Sidebar({ role }: SidebarProps) {
                 title: newPageTitle,
                 category: "product-guides",
               });
-              
               setNewPageTitle("");
             }}
           >
@@ -72,25 +85,28 @@ function Sidebar({ role }: SidebarProps) {
           </button>
         </div>
       )}
+
       {/* PAGES */}
       <ul className="sidebar-list">
         {filteredPages?.map((page) => {
           const isOpen = openPageId === page.id;
+
           return (
             <li key={page.id}>
-              {/* PAGE ROW */}
               <div
-            className="sidebar-item"
-            onClick={() => setOpenPageId(isOpen ? null : page.id)}
-          >
-            <span>{page.title}</span>
-            {page.sections.length > 0 && (
-              <span
-                className={`sidebar-arrow ${isOpen ? "open" : ""}`}
+                className="sidebar-item"
+                onClick={() => setOpenPageId(isOpen ? null : page.id)}
               >
-                ▾
-              </span>
-            )}
+                <span>{page.title}</span>
+
+                {page.sections.length > 0 && (
+                  <span
+                    className={`sidebar-arrow ${isOpen ? "open" : ""}`}
+                  >
+                    ▾
+                  </span>
+                )}
+
                 {role === "admin" && (
                   <button
                     className="delete-page"
@@ -109,17 +125,21 @@ function Sidebar({ role }: SidebarProps) {
                   </button>
                 )}
               </div>
-              {/* SUBPAGES */}
+
               {isOpen && (
                 <ul className="sidebar-sublist">
                   {page.sections.map((section) => (
-                    <li key={section.id} className="sidebar-subitem-row">
+                    <li
+                      key={section.id}
+                      className="sidebar-subitem-row"
+                    >
                       <Link
                         to={`/pages/${page.id}?section=${section.id}`}
                         className="sidebar-subitem"
                       >
                         {section.title}
                       </Link>
+
                       {role === "admin" && (
                         <button
                           className="delete-page"
@@ -141,7 +161,7 @@ function Sidebar({ role }: SidebarProps) {
                       )}
                     </li>
                   ))}
-                  {/* ADD SUBPAGE */}
+
                   {role === "admin" && (
                     <li>
                       <button
@@ -163,6 +183,38 @@ function Sidebar({ role }: SidebarProps) {
           );
         })}
       </ul>
+
+      {/* AUDIO PLAYER */}
+      <div style={{ marginTop: "auto" }}>
+        {showAudio && (
+          <SidebarAudioPlayer
+            audioUrl={relaxAudio}
+            canDelete={role === "admin"}
+            onDelete={() =>
+              updateSidebarAudio({ enabled: false })
+            }
+          />
+        )}
+        {!showAudio && role === "admin" && (
+          <button
+            onClick={() =>
+              updateSidebarAudio({ enabled: true })
+            }
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              borderRadius: 6,
+              border: "1px dashed #9ca3af",
+              background: "transparent",
+              cursor: "pointer",
+              fontSize: 13,
+              color: "#374151",
+            }}
+          >
+            ➕ Add audio player
+          </button>
+        )}
+      </div>
     </aside>
   );
 }

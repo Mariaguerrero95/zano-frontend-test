@@ -58,6 +58,10 @@ let tourSteps = [
     },
 ];
 let pageMoods: PageMood[] = [];
+
+let uiSettings = {
+    sidebarAudioEnabled: true,
+};
 /*** Types */
 type AddSectionResponse = {
     pageId: string;
@@ -110,8 +114,8 @@ type UpdateTextBlockArgs = {
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fakeBaseQuery(),
-    tagTypes: ["Pages"],
-    endpoints: (builder) => ({
+    tagTypes: ["Pages", "UiSettings"],
+    endpoints: (builder) => ({  
         /*** GET /pages */
         getPages: builder.query<Page[], void>({
         queryFn: async () => ({ data: pages }),
@@ -131,7 +135,6 @@ export const api = createApi({
         },
     invalidatesTags: ["Pages"],
     }),
-
         /*** PATCH /pages/:pageId */
         updatePage: builder.mutation<void, UpdatePageArgs>({
         queryFn: async ({ pageId, title }) => {
@@ -142,7 +145,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         /*** DELETE /pages/:pageId */
         deletePage: builder.mutation<void, DeletePageArgs>({
         queryFn: async ({ pageId }) => {
@@ -151,7 +153,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         /*** SECTIONS */
         addSection: builder.mutation<AddSectionResponse, AddSectionArgs>({
         queryFn: async ({ pageId, title }) => {
@@ -165,7 +166,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         updateSection: builder.mutation<void, UpdateSectionArgs>({
         queryFn: async ({ pageId, sectionId, title }) => {
             pages = pages.map((p) =>
@@ -182,7 +182,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         deleteSection: builder.mutation<void, DeleteSectionArgs>({
         queryFn: async ({ pageId, sectionId }) => {
             pages = pages.map((p) =>
@@ -199,7 +198,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         /*** BLOCKS */
         addTextBlock: builder.mutation<void, AddTextBlockArgs>({
         queryFn: async ({ pageId, sectionId, content }) => {
@@ -235,7 +233,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         updateTextBlock: builder.mutation<void, UpdateTextBlockArgs>({
         queryFn: async ({
             pageId,
@@ -267,7 +264,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         updateBlockLayout: builder.mutation<void, UpdateBlockLayoutArgs>({
         queryFn: async ({ pageId, sectionId, blockId, layout }) => {
             pages = pages.map((p) =>
@@ -293,7 +289,6 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
         }),
-
         /*** TOUR STEPS */
         getTourSteps: builder.query<TourStep[], { pageId: string }>({
             queryFn: async ({ pageId }) => ({
@@ -332,6 +327,22 @@ export const api = createApi({
         },
         invalidatesTags: ["Pages"],
     }),
+    /*** RELAX AUDIO */
+    getUiSettings: builder.query<{ sidebarAudioEnabled: boolean }, void>({
+        queryFn: async () => ({ data: uiSettings }),
+        providesTags: ["UiSettings"],
+        }),
+        
+        updateSidebarAudio: builder.mutation<void, { enabled: boolean }>({
+            queryFn: async ({ enabled }) => {
+                uiSettings = {
+                    ...uiSettings,
+                    sidebarAudioEnabled: enabled,
+                };
+            return { data: undefined };
+            },
+            invalidatesTags: ["UiSettings"],
+        }),
     }),
 });
 
@@ -351,4 +362,6 @@ export const {
     useUpdateTourStepsMutation,
     useGetPageMoodQuery,
     useSetPageMoodMutation,
+    useGetUiSettingsQuery,
+    useUpdateSidebarAudioMutation,
 } = api;

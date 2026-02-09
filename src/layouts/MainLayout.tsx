@@ -20,7 +20,6 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* SIDEBAR */}
       <Sidebar role={role} />
-
       {/* MAIN CONTENT */}
       <main
         className={role === "admin" ? "admin-view" : "user-view"}
@@ -31,7 +30,6 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
       >
         <Outlet />
       </main>
-
       {/* ROLE SWITCH + MOOD */}
       <div
         style={{
