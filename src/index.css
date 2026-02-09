@@ -83,3 +83,53 @@ body {
     background-position: 0% 50%;
   }
 }
+.user-view,
+.admin-view {
+  min-height: 100vh;
+  padding: 48px 24px;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f0e5b2 100%
+  );
+  background-size: 300% 300%;
+  animation: zenFlow 12s ease-in-out infinite;
+}
+@keyframes zenFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+body.dark .user-view,
+body.dark .admin-view {
+  background: linear-gradient(
+    180deg,
+    #80978a 45%,
+    #c5ecd7 70%
+  );
+  background-size: 300% 300%;
+  animation: forestFlow 16s ease-in-out infinite;
+}
+@keyframes forestFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.home-card,
+.card {
+  background: #ffffff;
+  color: #1f2933;
+}
+body.dark .home-card,
+body.dark .card {
+  background: #ffffff;
+  color: #1f2933;
+}
+body.dark .home-hero h1,
+body.dark .home-subtitle,
+body.dark .page-hero-title,
+body.dark .page-hero-text,
+body.dark .user-view h2
+body.dark .page-eyebrow  {
+  color: #ffffff;
+}

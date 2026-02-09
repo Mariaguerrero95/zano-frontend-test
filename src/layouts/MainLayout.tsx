@@ -57,7 +57,20 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-
+{/* 🌙 / ☀️ THEME TOGGLE */}
+<button
+          onClick={() => document.body.classList.toggle("dark")}
+          style={{
+            marginTop: 8,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 18,
+          }}
+          title="Toggle night mode"
+        >
+          🌙 / ☀️
+        </button>
         {role === "user" && flyingMood && (
           <div
             style={{

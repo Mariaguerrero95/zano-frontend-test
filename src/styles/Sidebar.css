@@ -130,3 +130,17 @@
     color: #507055;
     cursor: pointer;
 }
+.sidebar {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f0e5b2 100%
+    );
+}
+body.dark .sidebar {
+    background: linear-gradient(
+        180deg,
+        #97aa9f 45%,
+        #c5ecd7 70%
+    );
+}
