@@ -43,11 +43,9 @@ body {
   padding: 48px 24px;
   min-height: 100vh;
   background: linear-gradient(
-    120deg,
-    #e6f4ee,
-    #d8f2e9,
-    #eaf7f2,
-    #dff3ec
+    180deg,
+    #ffffff 0%,
+    #f0e5b2 100%
   );
   background-size: 300% 300%;
   animation: zenFlow 12s ease-in-out infinite;
