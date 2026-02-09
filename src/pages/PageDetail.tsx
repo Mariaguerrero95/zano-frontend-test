@@ -1,7 +1,7 @@
 import "../styles/PageDetail.css";
 import "../styles/MoodFeedbackModal.css";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import GridLayout from "react-grid-layout";
 import {
   useGetPagesQuery,
@@ -16,12 +16,13 @@ import {
   useUpdateTourStepsMutation,
 } from "../services/api";
 import RichTextEditor from "../components/RichTextEditor";
-import WelcomeModal from "../components/WelcomeModal";
+import WelcomeModal from "../components/PopupDiscount";
 import GettingStartedHero from "../components/GettingStartedHero";
 import PracticePath from "../components/PracticePath";
 import GettingStartedTour from "../components/GettingStartedTour";
 import TourStepsEditor from "../components/TourStepsEditor";
 import MoodFeedback from "../components/MoodFeedbackModal";
+import type { MoodLevel } from "../types/guide";
 import type { TextBlock } from "../types/guide";
 
 type GridItemLayout = {
@@ -33,9 +34,11 @@ type GridItemLayout = {
 };
 type PageDetailProps = {
   role: "user" | "admin";
+  onMoodSelected: (mood: MoodLevel) => void;
 };
 
-function PageDetail({ role }: PageDetailProps) {
+
+function PageDetail({ role, onMoodSelected }: PageDetailProps) {
   const { pageId } = useParams<{ pageId: string }>();
   const [searchParams] = useSearchParams();
   const activeSectionId = searchParams.get("section");
@@ -52,33 +55,41 @@ function PageDetail({ role }: PageDetailProps) {
   const [runTour, setRunTour] = useState(false);
   const page = pages?.find((p) => p.id === pageId) ?? pages?.[0];
   const pageIdValue = page?.id;
+  const hasShownTour = useRef(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any 
   const AnyGridLayout = GridLayout as any;
   const { data: tourSteps = [] } = useGetTourStepsQuery(
     { pageId: page?.id ?? "" },
     { skip: !page }
   );
 
-  //* eslint-disable-next-line react-hooks/exhaustive-deps*//
+  //* eslint-disable-next-line react-hooks/exhaustive-deps *//
   useEffect(() => {
-    if (!pageIdValue) return;
     if (role !== "user") return;
-
-    if (pageIdValue === "getting-started") {
+    if (pageIdValue !== "getting-started") return;
+    if (hasShownTour.current) return;
+  
+    setRunTour(true);
+    hasShownTour.current = true;
+  }, [pageIdValue, role]);
+  
+  
+  useEffect(() => {
+    if (role !== "user") return;
+  
+    const timer = setTimeout(() => {
       setShowWelcome(true);
-      setRunTour(true);
-    } else {
-      setShowWelcome(false);
-      setRunTour(false);
-    }
-}, [pageIdValue, role]);
-
+    }, 45000);
+  
+    return () => clearTimeout(timer);
+  }, [role]);
   
 
   if (isLoading || !pages) return <div>Loading…</div>;
   if (!page) return <div>Page not found</div>;
 
+  
   return (
     <>
       {/* USER TOUR */}
@@ -308,8 +319,11 @@ function PageDetail({ role }: PageDetailProps) {
             </div>
           );
         })}
-        {role === "user" && page && (
-        <MoodFeedback pageId={page.id} open={true} onClose={() => {}} />
+        {role === "user" && page.id === "getting-started" && (
+          <MoodFeedback
+            pageId={page.id}
+            onSelect={onMoodSelected}
+          />
         )}
       </div>
     </>

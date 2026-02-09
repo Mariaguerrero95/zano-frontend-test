@@ -15,7 +15,6 @@ type RichTextEditorProps = {
   onBlur?: () => void;
 };
 
-
 function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
   const editor = useEditor({
     

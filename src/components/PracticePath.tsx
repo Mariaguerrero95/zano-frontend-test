@@ -19,7 +19,6 @@ function PracticePath() {
             Understand alignment and safety in the main yoga poses.
             </p>
         </div>
-
         <div
             className="practice-card"
             onClick={() =>
@@ -33,7 +32,6 @@ function PracticePath() {
             Connect breath and movement to calm the mind.
             </p>
         </div>
-
         <div
             className="practice-card"
             onClick={() =>

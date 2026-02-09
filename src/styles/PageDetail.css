@@ -73,8 +73,6 @@
   max-width: 960px;
   margin: 0 auto;
 }
-
-/* TITLES */
 .user-view h2 {
   font-size: 36px;
   font-weight: 400;
@@ -89,8 +87,6 @@
   margin-bottom: 20px;
   color: #374151;
 }
-
-/* CARD */
 .card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -99,13 +95,9 @@
   border: 1px solid var(--color-border);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
 }
-
-/* BUTTONS */
 .page-detail button {
   margin-bottom: 16px;
 }
-
-/* GRID */
 .text-grid {
   margin-top: 16px;
 }
@@ -113,7 +105,6 @@
   max-width: 720px;
   margin-bottom: 64px;
 }
-
 .page-eyebrow {
   font-size: 13px;
   text-transform: uppercase;
@@ -121,14 +112,12 @@
   color: var(--color-primary);
   margin-bottom: 8px;
 }
-
 .page-hero-title {
   font-size: 30px;
   font-weight: 200;
   margin-bottom: 16px;
   text-transform: uppercase;
 }
-
 .page-hero-text {
   font-size: 18px;
   color: var(--color-third);

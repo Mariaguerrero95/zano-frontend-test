@@ -1,4 +1,4 @@
-import "../styles/WelcomeModal.css";
+import "../styles/PopupDiscount.css";
 
 type Props = {
     open: boolean;
