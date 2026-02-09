@@ -39,7 +39,7 @@ body {
 .admin-view {
   padding: 24px;
 }
-.user-view {
+.user-view{
   padding: 48px 24px;
   min-height: 100vh;
   background: linear-gradient(
@@ -50,7 +50,28 @@ body {
   background-size: 300% 300%;
   animation: zenFlow 12s ease-in-out infinite;
 }
-
+@keyframes zenFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.admin-view{
+  padding: 48px 24px;
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f0e5b2 100%
+  );
+  background-size: 300% 300%;
+  animation: zenFlow 12s ease-in-out infinite;
+}
 @keyframes zenFlow {
   0% {
     background-position: 0% 50%;
