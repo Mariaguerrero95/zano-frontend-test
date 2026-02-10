@@ -29,6 +29,9 @@
   object-fit: cover;
   border-radius: 8px;
 }
+.text-block p {
+  text-transform: none !important;
+}
 .react-resizable-handle {
   background: rgba(0, 0, 0, 0.4);
   border-radius: 4px;
@@ -80,7 +83,6 @@
   letter-spacing: -0.02em;
   text-transform: uppercase;
 }
-
 .user-view h3 {
   font-size: 22px;
   font-weight: 500;

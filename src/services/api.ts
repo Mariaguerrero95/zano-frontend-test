@@ -15,18 +15,21 @@ let pages: Page[] = [
     {
         id: "getting-started",
         title: "Getting Started",
+        description: "Your first steps into yoga practice.",
         category: "getting-started",
         sections: [],
     },
     {
         id: "product-guides",
         title: "Practice Guides",
+        description: "Flows, postures and mindful routines.",
         category: "product-guides",
         sections: [],
     },
     {
         id: "faq",
         title: "FAQ",
+        description: "Answers to common yoga questions.",
         category: "faq",
         sections: [],
     },
@@ -102,6 +105,7 @@ type DeletePageArgs = {
 type UpdatePageArgs = {
     pageId: string;
     title: string;
+    description?: string;
 };
 type UpdateTextBlockArgs = {
     pageId: string;
@@ -127,6 +131,7 @@ export const api = createApi({
         const newPage: Page = {
         id: uuid(),
         title,
+        description: "New page description",
         category,
         sections: [],
         };
@@ -137,9 +142,9 @@ export const api = createApi({
     }),
         /*** PATCH /pages/:pageId */
         updatePage: builder.mutation<void, UpdatePageArgs>({
-        queryFn: async ({ pageId, title }) => {
+        queryFn: async ({ pageId, title, description }) => {
             pages = pages.map((p) =>
-            p.id === pageId ? { ...p, title } : p
+            p.id === pageId ? { ...p, title, description } : p
             );
             return { data: undefined };
         },

@@ -27,9 +27,10 @@ export type PageCategory =
 export type Page = {
     id: string;
     title: string;
+    description?: string;
     category: PageCategory;
     sections: Section[];
-};
+    };
 export type ImageBlock = BaseBlock & {
     type: "image";
     url: string;

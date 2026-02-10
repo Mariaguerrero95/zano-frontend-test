@@ -25,6 +25,18 @@
     border: 1px solid rgba(255,255,255,0.4);
     box-shadow: 0 12px 32px rgba(0,0,0,0.05);
     transition: transform .4s ease, box-shadow .4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+    min-height: 160px;
+    overflow: visible;
+}
+.home-card p,
+.home-card textarea {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 .home-card:hover {
     transform: translateY(-6px);

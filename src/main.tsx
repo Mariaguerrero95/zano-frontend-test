@@ -4,9 +4,6 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 import App from "./App";
 import "./index.css";
-
-// ✅ ESTILOS OBLIGATORIOS
-
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 

@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
+import FontFamily from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import { useEffect } from "react";
 
@@ -20,16 +21,18 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
     
     extensions: [
       StarterKit.configure({
+        underline: false,
+        link: false,
         bulletList: {},
         orderedList: {},
         code: {},
         codeBlock: {},
         heading: { levels: [1, 2, 3] },
-      }),
-      
+      }), 
       Underline,
       TextStyle,
       Color,
+      FontFamily,
       Link.configure({
         openOnClick: false,
         autolink: true,
@@ -76,6 +79,25 @@ function RichTextEditor({ value, editable, onChange }: RichTextEditorProps) {
     <div className="rich-editor">
       {editable && (
         <div className="editor-toolbar">
+          <select
+            onMouseDown={(e) => e.stopPropagation()}
+            value={editor.getAttributes("textStyle").fontFamily || "Arial"}
+            onChange={(e) =>
+              editor
+                .chain()
+                .focus()
+                .setFontFamily(e.target.value)
+                .run()
+            }
+          >
+            <option value="Arial">Arial</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Lora">Lora</option>
+            <option value="Merriweather">Merriweather</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Playfair Display">Playfair Display</option>
+            <option value="Pacifico">Pacifico</option>
+          </select>
           <button onMouseDown={prevent} onClick={() => editor.chain().focus().toggleBold().run()}>
             <b>B</b>
           </button>

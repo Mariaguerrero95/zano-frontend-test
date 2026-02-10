@@ -18,6 +18,27 @@ type MainLayoutProps = {
 
 function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
   const [isDark, setIsDark] = useState(false);
+  const [homeCards, setHomeCards] = useState([
+    {
+      id: "getting-started",
+      title: "Getting Started",
+      description: "Your first steps into yoga practice.",
+      path: "/pages/getting-started",
+    },
+    {
+      id: "practice-guides",
+      title: "Practice Guides",
+      description: "Flows, postures and mindful routines.",
+      path: "/pages/product-guides",
+    },
+    {
+      id: "faq",
+      title: "FAQ",
+      description: "Answers to common yoga questions.",
+      path: "/pages/faq",
+    },
+  ]);
+  
   if (isDark) {
     document.body.classList.add("dark");
   } else {
@@ -35,7 +56,7 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
           flex: 1,
         }}
       >
-        <Outlet />
+      <Outlet context={{ role, homeCards, setHomeCards }} />
       </main>
       {/* role switch / mood */}
       <div

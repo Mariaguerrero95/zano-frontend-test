@@ -25,6 +25,7 @@ import MoodFeedback from "../components/MoodFeedbackModal";
 import type { MoodLevel } from "../types/guide";
 import type { TextBlock } from "../types/guide";
 
+
 type GridItemLayout = {
   i: string;
   x: number;
@@ -36,7 +37,6 @@ type PageDetailProps = {
   role: "user" | "admin";
   onMoodSelected: (mood: MoodLevel) => void;
 };
-
 
 function PageDetail({ role, onMoodSelected }: PageDetailProps) {
   const { pageId } = useParams<{ pageId: string }>();
@@ -56,7 +56,7 @@ function PageDetail({ role, onMoodSelected }: PageDetailProps) {
   const page = pages?.find((p) => p.id === pageId) ?? pages?.[0];
   const pageIdValue = page?.id;
   const hasShownTour = useRef(false);
-
+  
   // eslint-disable-next-line @typescript-eslint/no-explicit-any 
   const AnyGridLayout = GridLayout as any;
   const { data: tourSteps = [] } = useGetTourStepsQuery(
@@ -69,30 +69,24 @@ function PageDetail({ role, onMoodSelected }: PageDetailProps) {
     if (role !== "user") return;
     if (pageIdValue !== "getting-started") return;
     if (hasShownTour.current) return;
-  
-    setRunTour(true);
-    hasShownTour.current = true;
-  }, [pageIdValue, role]);
-  
+      setRunTour(true);
+      hasShownTour.current = true;
+  },  [pageIdValue, role]);
   
   useEffect(() => {
     if (role !== "user") return;
-  
     const timer = setTimeout(() => {
       setShowWelcome(true);
     }, 45000);
-  
     return () => clearTimeout(timer);
   }, [role]);
-  
-
   if (isLoading || !pages) return <div>Loading…</div>;
   if (!page) return <div>Page not found</div>;
 
   
   return (
     <>
-      {/* USER TOUR */}
+      {/* user tour */}
       {role === "user" && page.id === "getting-started" && (
         <GettingStartedTour
           run={runTour}
@@ -100,7 +94,7 @@ function PageDetail({ role, onMoodSelected }: PageDetailProps) {
           onFinish={() => setRunTour(false)}
         />
       )}
-      {/* WELCOME */}
+      {/* welcome */}
       <WelcomeModal
         open={showWelcome}
         onClose={() => setShowWelcome(false)}
@@ -125,21 +119,44 @@ function PageDetail({ role, onMoodSelected }: PageDetailProps) {
         ) : (
           page.id !== "getting-started" && <h2>{page.title}</h2>
         )}
-        {/* ADMIN: EDIT TOUR */}
+        {/* home card description (admin) */}
+        {role === "admin" && (
+          <textarea
+            value={page.description ?? ""}
+            onChange={(e) =>
+              updatePage({
+                pageId: page.id,
+                title: page.title,
+                description: e.target.value,
+              })
+            }
+            placeholder="Text shown on Home card"
+            style={{
+              width: "100%",
+              border: "none",
+              background: "transparent",
+              resize: "none",
+              marginBottom: 32,
+              fontSize: 14,
+              color: "#6b7280",
+            }}
+          />
+        )}
+        {/* admin:edit tour */}
         {role === "admin" && page.id === "getting-started" && (
           <TourStepsEditor
             steps={tourSteps}
             onSave={(steps) => updateTourSteps({ steps })}
           />
         )}
-        {/* USER EXPERIENCE */}
+        {/* user experience */}
         {role === "user" && page.id === "getting-started" && (
           <>
             <GettingStartedHero />
             <PracticePath />
           </>
         )}
-        {/* ADD SECTION */}
+        {/* add section */}
         {role === "admin" && (
           <button
             onClick={async () => {
