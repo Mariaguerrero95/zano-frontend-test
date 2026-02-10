@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import { useState } from "react";
 
 type MoodLevel =
   | "very_bad"
@@ -16,11 +17,18 @@ type MainLayoutProps = {
 };
 
 function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
+  const [isDark, setIsDark] = useState(false);
+  if (isDark) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+  
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* SIDEBAR */}
+      {/* sidebar */}
       <Sidebar role={role} />
-      {/* MAIN CONTENT */}
+      {/* main content */}
       <main
         className={role === "admin" ? "admin-view" : "user-view"}
         style={{
@@ -29,7 +37,7 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
       >
         <Outlet />
       </main>
-      {/* ROLE SWITCH + MOOD */}
+      {/* role switch / mood */}
       <div
         style={{
           position: "fixed",
@@ -47,7 +55,6 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
         <label style={{ marginRight: 8, fontWeight: 500 }}>
           Role:
         </label>
-
         <select
           value={role}
           onChange={(e) =>
@@ -57,20 +64,35 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-{/* 🌙 / ☀️ THEME TOGGLE */}
-<button
-          onClick={() => document.body.classList.toggle("dark")}
-          style={{
-            marginTop: 8,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: 18,
-          }}
-          title="Toggle night mode"
-        >
-          🌙 / ☀️
-        </button>
+        {/* DAY/NIGHT MODE */}
+        <div style={{ marginTop: 8, display: "flex", gap: 8, justifyContent: "center" }}>
+          <button
+            onClick={() => setIsDark(false)}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 18,
+              opacity: isDark ? 0.4 : 1,
+            }}
+            title="Day mode"
+          >
+            ☀️
+          </button>
+          <button
+            onClick={() => setIsDark(true)}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 18,
+              opacity: isDark ? 1 : 0.4,
+            }}
+            title="Night mode"
+          >
+            🌙
+          </button>
+        </div>
         {role === "user" && flyingMood && (
           <div
             style={{
@@ -95,7 +117,6 @@ function MainLayout({ role, onRoleChange, flyingMood }: MainLayoutProps) {
             <span>Feedback sent</span>
           </div>
         )}
-
       </div>
     </div>
   );
